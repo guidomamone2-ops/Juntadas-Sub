@@ -1,10 +1,3 @@
-// Ruta de servidor: GET/POST del estado completo del tablero (compartido por todo el grupo).
-// Usa Upstash Redis como base de datos. Lee las variables que agrega la
-// integración de Marketplace en Vercel (a veces con el nombre viejo
-// KV_REST_API_URL / KV_REST_API_TOKEN, a veces con el nuevo
-// UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN) para no depender de
-// cuál de los dos haya quedado cargado.
-
 import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
