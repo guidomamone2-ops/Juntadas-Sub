@@ -1,15 +1,16 @@
 // Ruta de servidor: GET/POST del estado completo del tablero (compartido por todo el grupo).
-// Usa Upstash Redis como base de datos (gratis, se conecta desde el
-// Marketplace de integraciones de Vercel). Hace falta:
-//   1. En el dashboard del proyecto en Vercel: Storage -> Marketplace Database
-//      Providers -> Upstash -> Redis (o instalar la integración "Upstash" desde
-//      https://vercel.com/marketplace)
-//   2. Conectarlo a este proyecto. Eso agrega solas las variables de entorno
-//      UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN.
+// Usa Upstash Redis como base de datos. Lee las variables que agrega la
+// integración de Marketplace en Vercel (a veces con el nombre viejo
+// KV_REST_API_URL / KV_REST_API_TOKEN, a veces con el nuevo
+// UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN) para no depender de
+// cuál de los dos haya quedado cargado.
 
 import { Redis } from "@upstash/redis";
 
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 const BOARD_KEY = "juntadas-sub:board-data";
 
