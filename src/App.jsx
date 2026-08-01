@@ -19,6 +19,7 @@ import {
   RefreshCw,
   Sparkles,
   HelpCircle,
+  UserX,
 } from "lucide-react";
 
 const STORAGE_KEY = "board-data";
@@ -1666,6 +1667,8 @@ export default function JuntadasSub() {
     })
     .sort((a, b) => b.pct - a.pct || b.present - a.present);
 
+  const friendsByAttendance = stats.map((s) => s.name);
+
   let record = null;
   weekDatesAsc.forEach((d) => {
     const count = friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length;
@@ -1865,6 +1868,27 @@ export default function JuntadasSub() {
         </div>
       )}
 
+      {weekDates.length > 0 && (
+        <div className="mx-5 mt-3 bg-rose-950/30 border border-rose-900 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-2 mb-1">
+            <UserX size={16} className="text-rose-400 flex-shrink-0" />
+            <span className="text-rose-300 text-sm font-display font-semibold uppercase tracking-wide">
+              Lista Negra
+            </span>
+          </div>
+          {(() => {
+            const lastDate = weekDates[0];
+            const absentees = friends.filter((f) => !normalizeCell(data.weeks[lastDate][f]).attended);
+            return absentees.length === 0 ? (
+              <p className="text-stone-300 text-sm">Nadie faltó en la última juntada. 👏</p>
+            ) : (
+              <p className="text-stone-100 text-sm">{absentees.join(", ")}</p>
+            );
+          })()}
+          <p className="text-stone-500 text-xs mt-1">Quiénes no vinieron a la última juntada.</p>
+        </div>
+      )}
+
       <div className="px-5 mt-6">
         <div className="flex items-center gap-1.5 mb-3">
           <Trophy size={15} className="text-amber-500" />
@@ -1886,37 +1910,56 @@ export default function JuntadasSub() {
               </tr>
             </thead>
             <tbody>
-              {stats.map((s, i) => (
-                <tr key={s.name} className="border-b border-stone-700/50 last:border-0">
-                  <td className="px-3 py-2 text-stone-500 font-mono">{i + 1}</td>
-                  <td className="px-3 py-2 text-stone-50 font-medium">{s.name}</td>
-                  <td className="px-3 py-2 text-right text-stone-300 font-mono">
-                    {s.present}/{totalWeeks}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono font-semibold text-orange-500">{s.pct}%</td>
-                  <td className="px-3 py-2 text-right text-amber-500 font-mono">
-                    {s.host > 0 ? (
-                      <span className="inline-flex items-center gap-1">
-                        <Crown size={13} /> {s.host}
-                      </span>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono text-sky-500">
-                    {s.confiabilidad === null ? "—" : `${s.confiabilidad}%`}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono text-stone-300">
-                    {s.streak > 0 ? (
-                      <span className="inline-flex items-center gap-1">
-                        {s.streak} <Flame size={12} className="text-orange-500" />
-                      </span>
-                    ) : (
-                      "0"
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {(() => {
+                const minPct = totalWeeks > 0 && stats.length > 0 ? Math.min(...stats.map((s) => s.pct)) : null;
+                return stats.map((s, i) => {
+                  const isLast = minPct !== null && s.pct === minPct;
+                  return (
+                    <tr
+                      key={s.name}
+                      className={`border-b border-stone-700/50 last:border-0 ${
+                        isLast ? "bg-rose-950/40" : ""
+                      }`}
+                    >
+                      <td className="px-3 py-2 text-stone-500 font-mono">{i + 1}</td>
+                      <td className={`px-3 py-2 font-medium ${isLast ? "text-rose-300" : "text-stone-50"}`}>
+                        {s.name}
+                      </td>
+                      <td className={`px-3 py-2 text-right font-mono ${isLast ? "text-rose-300" : "text-stone-300"}`}>
+                        {s.present}/{totalWeeks}
+                      </td>
+                      <td
+                        className={`px-3 py-2 text-right font-mono font-semibold ${
+                          isLast ? "text-rose-400" : "text-orange-500"
+                        }`}
+                      >
+                        {s.pct}%
+                      </td>
+                      <td className="px-3 py-2 text-right text-amber-500 font-mono">
+                        {s.host > 0 ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Crown size={13} /> {s.host}
+                          </span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-right font-mono text-sky-500">
+                        {s.confiabilidad === null ? "—" : `${s.confiabilidad}%`}
+                      </td>
+                      <td className="px-3 py-2 text-right font-mono text-stone-300">
+                        {s.streak > 0 ? (
+                          <span className="inline-flex items-center gap-1">
+                            {s.streak} <Flame size={12} className="text-orange-500" />
+                          </span>
+                        ) : (
+                          "0"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                });
+              })()}
             </tbody>
           </table>
         </div>
@@ -1968,7 +2011,7 @@ export default function JuntadasSub() {
               <thead>
                 <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
                   <th className="text-left px-3 py-2 sticky left-0 bg-stone-800">Fecha</th>
-                  {friends.map((f) => (
+                  {friendsByAttendance.map((f) => (
                     <th key={f} className="text-center px-3 py-2 min-w-[64px]">
                       {f}
                     </th>
@@ -1992,7 +2035,7 @@ export default function JuntadasSub() {
                         )}
                       </div>
                     </td>
-                    {friends.map((f) => {
+                    {friendsByAttendance.map((f) => {
                       const cell = normalizeCell(data.weeks[date][f]);
                       const hasReason = cell.reason && cell.reason.length > 0;
                       let bg = "bg-stone-700 text-stone-400";
@@ -2145,9 +2188,7 @@ export default function JuntadasSub() {
           <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
             Foro semanal
           </h2>
-          <p className="text-stone-500 text-xs mb-4">
-            Un hilo de comentarios por cada juntada. Elegí tu nombre arriba para poder escribir.
-          </p>
+          <p className="text-stone-500 text-xs mb-4">Un hilo de comentarios por cada juntada.</p>
 
           {weekDates.length === 0 ? (
             <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-8 text-center text-stone-500 text-sm">
