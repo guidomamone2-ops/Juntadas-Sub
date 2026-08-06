@@ -20,6 +20,14 @@ import {
   Sparkles,
   HelpCircle,
   UserX,
+  Menu,
+  Package,
+  Lightbulb,
+  Sun,
+  Quote,
+  BarChart3,
+  Star,
+  Mail,
 } from "lucide-react";
 
 const STORAGE_KEY = "board-data";
@@ -52,8 +60,8 @@ const FAQ_ITEMS = [
     a: "Primero elegís tu nombre arriba y creás tu contraseña (una sola vez; el dispositivo la recuerda después). Con la sesión iniciada, tocás el lápiz en tu propia celda de cualquier jueves y escribís el motivo — es opcional, nadie te obliga a poner nada.",
   },
   {
-    q: "¿Para qué sirve el Foro?",
-    a: "Es un hilo de comentarios por cada jueves, para tirar anécdotas, chistes o lo que sea de esa juntada. Cualquiera con sesión iniciada puede escribir. Es vía libre: están permitidos los insultos y las faltas de respeto, cada uno pone lo que quiere — pero lo hace bajo su propio nombre y se hace responsable de lo que escribe. Ni el admin puede borrar comentarios.",
+    q: "¿Para qué sirve la solapa de Temas?",
+    a: 'Es donde se proponen los temas de charla para la próxima semanal — una lista colaborativa, sin votación. Cada uno puede proponer hasta 2 temas, no es obligatorio. Se ve quién propuso cada uno, y cada uno puede editar o borrar solo lo suyo. Cuando el admin carga la juntada siguiente, esa ronda queda archivada (de solo lectura) y arranca una nueva para la próxima.',
   },
   {
     q: "¿Cómo funciona la Trivia?",
@@ -62,6 +70,10 @@ const FAQ_ITEMS = [
   {
     q: "¿Mi contraseña es segura?",
     a: "No es un sistema de seguridad bancario — es solo una traba para que no cualquiera comente o cargue excusas en nombre de otro dentro del grupo.",
+  },
+  {
+    q: "¿Qué es el Container?",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — entran los 2 más votados (o más si hay empate). También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
@@ -847,6 +859,79 @@ const HISTORICAL_SEED = {
   ]
 };
 
+const HISTORICAL_WEEKEND_SEED = {
+  "weekends": {
+    "2026-07-11": {
+      "plan": "Arrancamos con raviolada en los Fran Mauve, viendo champa, luego los pumas y cerramos con Noruega vs Inglaterra. Avanzamos con el día y a eso de las 19/20hs nos fuimos a lo de Lulu, donde Pipe el Carnes prendió el fuego y nos deleitó con un asombroso asado, en el medio hubo sanguches de miga, picada y muchas papas fritas (que se comió Sapito). Siguiendo las cabalas, Martín R nos designó los lugares de cada uno, y Victoria Quade nos agasajó con más papas, empanadas y tabletas de Freddo. Vimos el partido, la albiceleste se impuso 3-1, y terminamos la jornada entre risas.",
+      "attendance": {
+        "Tato": true,
+        "Turko": true,
+        "Lombriz": true,
+        "Mais": true,
+        "Orti": false,
+        "Tano": true,
+        "Lulu": false,
+        "Panti": true,
+        "Pipe": true,
+        "Bachicha": true,
+        "MCP": false,
+        "Mauve": true
+      }
+    },
+    "2026-07-18": {
+      "plan": "Nos juntamos a alentar a la selección en una paupérrima final del mundo — hubo llantos, enojos, risas previas al partido, muchas emociones juntas. El resultado no fue el esperado pero nos juntamos igual, como en el 2022. El bonus track del año: Agus (Maimon) se desnudó en pleno partido y se sentó así en el sillón de Lulu (a Lulu no le gustó nada).",
+      "attendance": {
+        "Tato": true,
+        "Turko": false,
+        "Lombriz": true,
+        "Mais": true,
+        "Orti": true,
+        "Tano": true,
+        "Lulu": true,
+        "Panti": true,
+        "Pipe": true,
+        "Bachicha": true,
+        "MCP": true,
+        "Mauve": true
+      }
+    },
+    "2026-07-25": {
+      "plan": "Anelkita disputó un amistoso interno con Mas, Según Villa y la banda — se lo lleva Anelkita pero el rival los hizo sufrir. Después fuimos al buffet de San Carlos Club, con atención y entrega de comida bastante tardías, platos variados (el plato del día lo llevan MCP y el Búfalo Vidiri: entraña con verduras asadas y mucha papa). Seguimos en lo de Marquitos Trica, charlando, tomando mates y viendo cómo cagaron a palos a Edul. Nos retiramos de la residencia Tricarico como a las 17:30 (la banda riverplatense se fue al Monumental), y los que quedaron se fueron a Buena Vista a jugar al PlayStation en parejas — victoria fantástica de Gero Arias, héroe del grupo. El plan cambió sobre la marcha (como todo lo que organizan el Turkito Gettas y Lulu el Panza Ramos): terminaron cenando en lo de MG, ahí se emborracharon, bailaron, y como a las 5am se fueron a comer una McFernández antes de dormir. Así se cerró un fin de semana a pura joda.",
+      "attendance": {
+        "Tato": true,
+        "Turko": true,
+        "Lombriz": true,
+        "Mais": false,
+        "Orti": true,
+        "Tano": false,
+        "Lulu": true,
+        "Panti": true,
+        "Pipe": true,
+        "Bachicha": true,
+        "MCP": true,
+        "Mauve": true
+      }
+    },
+    "2026-08-01": {
+      "plan": "Los chicos iban a jugar al fútbol, pero se canceló — igual, algunos guerreros decidieron juntarse pese a las dificultades. La juntada arranca con unos mates en San Carlos con Felipe agasajándonos con sus ladridos de siempre. Después la banda se dirigió al market de San Carlos a comprar carne, y se prendió el fuego. Los chicos comieron asado, el Tanito se fue porque corría la carrera, y ahí terminó todo.",
+      "attendance": {
+        "Tato": false,
+        "Turko": false,
+        "Lombriz": true,
+        "Mais": false,
+        "Orti": true,
+        "Tano": true,
+        "Lulu": false,
+        "Panti": false,
+        "Pipe": false,
+        "Bachicha": true,
+        "MCP": false,
+        "Mauve": true
+      }
+    }
+  }
+};
+
 
 function emptyCell() {
   return { attended: false, host: false, notified: false, reason: "" };
@@ -893,9 +978,25 @@ function normalizeData(d) {
     guests: Array.isArray(d.guests) ? d.guests : [],
     guestLog: Array.isArray(d.guestLog) ? d.guestLog : [],
     comments: d.comments && typeof d.comments === "object" ? d.comments : {},
+    topics: d.topics && typeof d.topics === "object" ? d.topics : {},
+    weekends: d.weekends && typeof d.weekends === "object" ? d.weekends : {},
+    quoteOfWeek:
+      d.quoteOfWeek && typeof d.quoteOfWeek === "object"
+        ? { text: d.quoteOfWeek.text || "", author: d.quoteOfWeek.author || "" }
+        : { text: "", author: "" },
     friendAuth: d.friendAuth && typeof d.friendAuth === "object" ? d.friendAuth : {},
     trivia: d.trivia && typeof d.trivia === "object" ? d.trivia : {},
     calendar: d.calendar && typeof d.calendar === "object" ? d.calendar : {},
+    contactMessages: Array.isArray(d.contactMessages) ? d.contactMessages : [],
+    container:
+      d.container && typeof d.container === "object"
+        ? {
+            members: Array.isArray(d.container.members) ? d.container.members : [],
+            since: d.container.since && typeof d.container.since === "object" ? d.container.since : {},
+            history: Array.isArray(d.container.history) ? d.container.history : [],
+            votes: d.container.votes && typeof d.container.votes === "object" ? d.container.votes : {},
+          }
+        : { members: [], since: {}, history: [], votes: {} },
   };
 }
 
@@ -903,10 +1004,198 @@ function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function Podium({ items, unit = "" }) {
+  if (items.length === 0) return null;
+  // Agrupa por valor (los empatados comparten el mismo puesto) y toma los primeros 3 puestos distintos
+  const groups = [];
+  items.forEach((item) => {
+    const lastGroup = groups[groups.length - 1];
+    if (lastGroup && lastGroup.value === item.value) {
+      lastGroup.names.push(item.name);
+    } else {
+      groups.push({ value: item.value, names: [item.name] });
+    }
+  });
+  const top3 = groups.slice(0, 3);
+  const order = [1, 0, 2].filter((i) => i < top3.length);
+  const heightClass = { 0: "h-24", 1: "h-16", 2: "h-10" };
+  const medal = { 0: "🥇", 1: "🥈", 2: "🥉" };
+  const borderClass = { 0: "border-amber-500", 1: "border-stone-400", 2: "border-orange-800" };
+  return (
+    <div className="flex items-end justify-center gap-2">
+      {order.map((idx) => {
+        const group = top3[idx];
+        if (!group) return <div key={idx} className="flex-1 max-w-[110px]" />;
+        return (
+          <div key={idx} className="flex flex-col items-center flex-1 max-w-[110px]">
+            <div className="text-2xl mb-1">{medal[idx]}</div>
+            <div className="text-stone-50 text-xs font-medium text-center mb-1 leading-tight">
+              {group.names.map((n) => (
+                <div key={n} className="truncate w-full">
+                  {n}
+                </div>
+              ))}
+            </div>
+            <div
+              className={`w-full ${heightClass[idx]} bg-gradient-to-t from-stone-700 to-stone-600 rounded-t-lg flex items-start justify-center pt-1.5 border-t-2 ${borderClass[idx]}`}
+            >
+              <span className="text-orange-400 font-mono text-xs font-semibold">
+                {group.value}
+                {unit}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function BarRow({ label, value, max, color, displayValue }) {
+  const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
+  return (
+    <div className="mb-2.5">
+      <div className="flex justify-between text-xs mb-0.5">
+        <span className="text-stone-300">{label}</span>
+        <span className="text-stone-400 font-mono">{displayValue !== undefined ? displayValue : value}</span>
+      </div>
+      <div className="w-full bg-stone-900 rounded-full h-2">
+        <div className={`${color} h-2 rounded-full transition-all`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function AttendanceLineChart({ points, labels, maxY }) {
+  const n = points.length;
+  if (n === 0) return null;
+  const stepX = n > 1 ? 100 / (n - 1) : 0;
+  const coords = points.map((v, i) => {
+    const x = n > 1 ? i * stepX : 50;
+    const y = maxY > 0 ? 38 - (v / maxY) * 34 : 38;
+    return { x, y, v };
+  });
+  const polyPoints = coords.map((c) => `${c.x},${c.y}`).join(" ");
+
+  // Elige hasta 3 indices de referencia, bien distribuidos (primero, medio, ultimo)
+  let labelIdxs = [];
+  if (labels) {
+    if (n <= 3) {
+      labelIdxs = labels.map((_, i) => i);
+    } else {
+      labelIdxs = [...new Set([0, Math.round((n - 1) / 2), n - 1])];
+    }
+  }
+
+  return (
+    <div>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-28">
+        <polyline points={polyPoints} fill="none" stroke="#ea580c" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
+        {coords.map((c, i) => (
+          <circle key={i} cx={c.x} cy={c.y} r="1.4" fill="#fb923c" />
+        ))}
+      </svg>
+      {labels && (
+        <div className="relative h-4 mt-1">
+          {labelIdxs.map((i) => (
+            <span
+              key={i}
+              className="absolute text-stone-600 text-[10px] font-mono whitespace-nowrap"
+              style={{
+                left: `${coords[i].x}%`,
+                transform: i === 0 ? "translateX(0)" : i === n - 1 ? "translateX(-100%)" : "translateX(-50%)",
+              }}
+            >
+              {labels[i]}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function getLatestDate(weeksObj) {
   const dates = Object.keys(weeksObj || {});
   if (dates.length === 0) return null;
   return dates.sort((a, b) => (a < b ? 1 : -1))[0];
+}
+
+// Cuenta los votos de entrada/salida al Container de una juntada ya concluida
+// y devuelve el objeto container actualizado. No borra los votos (quedan
+// como historial interno), pero nunca se muestra quien voto que a nadie.
+function tallyContainer(juntadaDate, baseData) {
+  const votes = (baseData.container.votes && baseData.container.votes[juntadaDate]) || {
+    entry: {},
+    exit: {},
+  };
+  const currentMembers = baseData.container.members;
+
+  // ENTRADA: 2 mas votados, o mas si hay empate en el 2do puesto
+  // Cada votante puede marcar mas de un nombre; cada marca suma un voto para ese nombre.
+  const entryCounts = {};
+  Object.values(votes.entry || {}).forEach((candidates) => {
+    (candidates || []).forEach((candidate) => {
+      entryCounts[candidate] = (entryCounts[candidate] || 0) + 1;
+    });
+  });
+  const uniqueEntryCounts = [...new Set(Object.values(entryCounts))].sort((a, b) => b - a);
+  let entrants = [];
+  for (const cnt of uniqueEntryCounts) {
+    const namesAtCount = Object.keys(entryCounts).filter((n) => entryCounts[n] === cnt);
+    entrants.push(...namesAtCount);
+    if (entrants.length >= 2) break;
+  }
+  entrants = entrants.filter((n) => !currentMembers.includes(n));
+
+  // SALIDA: el/los mas votados para salir, siempre que superen a los votos de "que sigan"
+  // (un votante que no marca a nadie esta votando implicitamente "que sigan").
+  const exitCounts = {};
+  let stayCount = 0;
+  Object.values(votes.exit || {}).forEach((choices) => {
+    if (!choices || choices.length === 0) {
+      stayCount += 1;
+      return;
+    }
+    choices.forEach((choice) => {
+      exitCounts[choice] = (exitCounts[choice] || 0) + 1;
+    });
+  });
+  const maxExitVotes = Object.keys(exitCounts).length ? Math.max(...Object.values(exitCounts)) : 0;
+  let releasedNames = [];
+  if (maxExitVotes > 0 && maxExitVotes >= stayCount) {
+    releasedNames = Object.keys(exitCounts).filter((n) => exitCounts[n] === maxExitVotes);
+  }
+
+  const nextMembers = [...currentMembers.filter((n) => !releasedNames.includes(n)), ...entrants];
+  const nextSince = { ...baseData.container.since };
+  entrants.forEach((n) => {
+    nextSince[n] = juntadaDate;
+  });
+  releasedNames.forEach((n) => {
+    delete nextSince[n];
+  });
+
+  const nextHistory = [...baseData.container.history];
+  releasedNames.forEach((n) => {
+    nextHistory.push({
+      name: n,
+      dateIn: baseData.container.since[n] || juntadaDate,
+      dateOut: juntadaDate,
+    });
+  });
+
+  return {
+    ...baseData.container,
+    members: nextMembers,
+    since: nextSince,
+    history: nextHistory,
+  };
+}
+
+function formatDateShort(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return `${d.getDate()}/${d.getMonth() + 1}`;
 }
 
 function formatDate(iso) {
@@ -956,9 +1245,28 @@ export default function JuntadasSub() {
   const [loginError, setLoginError] = useState("");
 
   const [activeTab, setActiveTab] = useState("planilla");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [entryVoteChoices, setEntryVoteChoices] = useState([]);
+  const [exitVoteChoices, setExitVoteChoices] = useState([]);
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
   const [commentDrafts, setCommentDrafts] = useState({});
+  const [topicDraft, setTopicDraft] = useState("");
+  const [editingTopicId, setEditingTopicId] = useState(null);
+  const [editingTopicText, setEditingTopicText] = useState("");
+  const [topicsRoundIndex, setTopicsRoundIndex] = useState(0);
+  const [newWeekendDate, setNewWeekendDate] = useState(todayISO());
+  const [showAddWeekend, setShowAddWeekend] = useState(false);
+  const [deleteWeekendConfirm, setDeleteWeekendConfirm] = useState(null);
+  const [editingPlanDate, setEditingPlanDate] = useState(null);
+  const [editingQuote, setEditingQuote] = useState(false);
+  const [quoteTextDraft, setQuoteTextDraft] = useState("");
+  const [quoteAuthorDraft, setQuoteAuthorDraft] = useState("");
+  const [devMessageDraft, setDevMessageDraft] = useState("");
+  const [suggestionDraft, setSuggestionDraft] = useState("");
+  const [devMessageSent, setDevMessageSent] = useState(false);
+  const [suggestionSent, setSuggestionSent] = useState(false);
+  const [editingPlanText, setEditingPlanText] = useState("");
 
   const [triviaLoading, setTriviaLoading] = useState(false);
   const [triviaError, setTriviaError] = useState("");
@@ -1112,7 +1420,22 @@ export default function JuntadasSub() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (friends.length === 0 || !setupPin.trim()) return;
-    persist({ friends, pin: setupPin.trim(), weeks: {}, guests: [], guestLog: [], comments: {}, friendAuth: {}, trivia: {}, calendar: {} });
+    persist({
+      friends,
+      pin: setupPin.trim(),
+      weeks: {},
+      guests: [],
+      guestLog: [],
+      comments: {},
+      topics: {},
+      weekends: {},
+      quoteOfWeek: { text: "El IMAX es para los boludos", author: "el cinéfilo Costa Paz" },
+      friendAuth: {},
+      trivia: {},
+      calendar: {},
+      contactMessages: [],
+      container: { members: [], since: {}, history: [], votes: {} },
+    });
   };
 
   const handlePinSubmit = () => {
@@ -1128,9 +1451,15 @@ export default function JuntadasSub() {
 
   const addWeek = () => {
     if (!newDate || data.weeks[newDate]) return;
+    const previousLatest = getLatestDate(data.weeks);
+    const nextContainer =
+      previousLatest && data.container.votes[previousLatest]
+        ? tallyContainer(previousLatest, data)
+        : data.container;
     const next = {
       ...data,
       weeks: { ...data.weeks, [newDate]: emptyWeekRow(data.friends) },
+      container: nextContainer,
     };
     persist(next);
     setShowAddWeek(false);
@@ -1165,6 +1494,57 @@ export default function JuntadasSub() {
       comments: { ...data.comments, [date]: [...existing, entry] },
     });
     setCommentDrafts({ ...commentDrafts, [date]: "" });
+  };
+
+  const addTopic = (round) => {
+    const openRound = getLatestDate(data.weeks);
+    if (!myName || round !== openRound) return;
+    const text = (topicDraft || "").trim();
+    if (!text) return;
+    const existing = data.topics[round] || [];
+    const mine = existing.filter((t) => t.author === myName);
+    if (mine.length >= 2) return;
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      author: myName,
+      text: text.slice(0, 120),
+      ts: Date.now(),
+    };
+    persist({
+      ...data,
+      topics: { ...data.topics, [round]: [...existing, entry] },
+    });
+    setTopicDraft("");
+  };
+
+  const deleteTopic = (round, id) => {
+    const openRound = getLatestDate(data.weeks);
+    if (round !== openRound) return;
+    const existing = data.topics[round] || [];
+    const target = existing.find((t) => t.id === id);
+    if (!target || target.author !== myName) return;
+    persist({
+      ...data,
+      topics: { ...data.topics, [round]: existing.filter((t) => t.id !== id) },
+    });
+  };
+
+  const saveTopicEdit = (round, id, newText) => {
+    const openRound = getLatestDate(data.weeks);
+    if (round !== openRound) return;
+    const clean = (newText || "").trim();
+    if (!clean) return;
+    const existing = data.topics[round] || [];
+    const target = existing.find((t) => t.id === id);
+    if (!target || target.author !== myName) return;
+    persist({
+      ...data,
+      topics: {
+        ...data.topics,
+        [round]: existing.map((t) => (t.id === id ? { ...t, text: clean.slice(0, 120) } : t)),
+      },
+    });
+    setEditingTopicId(null);
   };
 
   const generateTriviaForDate = async (targetDate, baseData) => {
@@ -1234,6 +1614,67 @@ export default function JuntadasSub() {
     const nextTrivia = { ...data.trivia };
     delete nextTrivia[date];
     persist({ ...data, trivia: nextTrivia });
+  };
+
+  const castEntryVote = (candidatesArray) => {
+    if (!myName || !data.friends.includes(myName)) return;
+    const latest = getLatestDate(data.weeks);
+    if (!latest) return;
+    const roundVotes = data.container.votes[latest] || { entry: {}, exit: {} };
+    if (roundVotes.entry && roundVotes.entry[myName] !== undefined) return; // ya voto esta ronda
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        votes: {
+          ...data.container.votes,
+          [latest]: {
+            entry: { ...(roundVotes.entry || {}), [myName]: candidatesArray },
+            exit: roundVotes.exit || {},
+          },
+        },
+      },
+    });
+    setEntryVoteChoices([]);
+  };
+
+  const castExitVote = (namesArray) => {
+    if (!myName || !data.friends.includes(myName)) return;
+    const latest = getLatestDate(data.weeks);
+    if (!latest) return;
+    const roundVotes = data.container.votes[latest] || { entry: {}, exit: {} };
+    if (roundVotes.exit && roundVotes.exit[myName] !== undefined) return; // ya voto esta ronda
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        votes: {
+          ...data.container.votes,
+          [latest]: {
+            entry: roundVotes.entry || {},
+            exit: { ...(roundVotes.exit || {}), [myName]: namesArray },
+          },
+        },
+      },
+    });
+    setExitVoteChoices([]);
+  };
+
+  const releaseFromContainer = (name) => {
+    if (!isAdmin) return;
+    const nextMembers = data.container.members.filter((n) => n !== name);
+    const nextSince = { ...data.container.since };
+    const dateIn = nextSince[name] || todayISO();
+    delete nextSince[name];
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        members: nextMembers,
+        since: nextSince,
+        history: [...data.container.history, { name, dateIn, dateOut: todayISO() }],
+      },
+    });
   };
 
   const clearTriviaTimer = () => {
@@ -1345,6 +1786,47 @@ export default function JuntadasSub() {
       nextComments[d] = list.map((c) => (c.author === oldName ? { ...c, author: clean } : c));
     });
 
+    const nextTopics = {};
+    Object.entries(data.topics).forEach(([d, list]) => {
+      nextTopics[d] = list.map((t) => (t.author === oldName ? { ...t, author: clean } : t));
+    });
+
+    const nextWeekends = {};
+    Object.entries(data.weekends).forEach(([d, entry]) => {
+      const nextAttendance = { ...entry.attendance };
+      if (oldName in nextAttendance) {
+        nextAttendance[clean] = nextAttendance[oldName];
+        delete nextAttendance[oldName];
+      }
+      nextWeekends[d] = { ...entry, attendance: nextAttendance };
+    });
+
+    const nextContainerMembers = data.container.members.map((n) => (n === oldName ? clean : n));
+    const nextContainerSince = { ...data.container.since };
+    if (oldName in nextContainerSince) {
+      nextContainerSince[clean] = nextContainerSince[oldName];
+      delete nextContainerSince[oldName];
+    }
+    const nextContainerHistory = data.container.history.map((h) => (h.name === oldName ? { ...h, name: clean } : h));
+    const nextContainerVotes = {};
+    Object.entries(data.container.votes).forEach(([d, round]) => {
+      const renameVoterMap = (obj) => {
+        const next = {};
+        Object.entries(obj || {}).forEach(([voter, choice]) => {
+          const nextVoter = voter === oldName ? clean : voter;
+          const nextChoice = Array.isArray(choice) ? choice.map((n) => (n === oldName ? clean : n)) : choice;
+          next[nextVoter] = nextChoice;
+        });
+        return next;
+      };
+      nextContainerVotes[d] = {
+        entry: renameVoterMap(round.entry),
+        exit: renameVoterMap(round.exit),
+      };
+    });
+
+    const nextContactMessages = data.contactMessages.map((m) => (m.author === oldName ? { ...m, author: clean } : m));
+
     const nextFriendAuth = { ...data.friendAuth };
     if (oldName in nextFriendAuth) {
       nextFriendAuth[clean] = nextFriendAuth[oldName];
@@ -1368,12 +1850,119 @@ export default function JuntadasSub() {
       guestLog: nextGuestLog,
       weeks: nextWeeks,
       comments: nextComments,
+      topics: nextTopics,
+      weekends: nextWeekends,
+      contactMessages: nextContactMessages,
+      container: {
+        ...data.container,
+        members: nextContainerMembers,
+        since: nextContainerSince,
+        history: nextContainerHistory,
+        votes: nextContainerVotes,
+      },
       friendAuth: nextFriendAuth,
       trivia: nextTrivia,
     });
 
     if (myName === oldName) {
       setMyName(clean);
+    }
+  };
+
+  const missingHistoricalWeekends = data
+    ? Object.keys(HISTORICAL_WEEKEND_SEED.weekends).filter((d) => !data.weekends[d])
+    : [];
+
+  const importHistoricalWeekends = () => {
+    const mergedWeekends = { ...data.weekends };
+    let added = 0;
+    Object.entries(HISTORICAL_WEEKEND_SEED.weekends).forEach(([date, entry]) => {
+      if (mergedWeekends[date]) return;
+      const attendance = {};
+      data.friends.forEach((f) => {
+        attendance[f] = entry.attendance[f] !== undefined ? entry.attendance[f] : false;
+      });
+      mergedWeekends[date] = { plan: entry.plan, attendance };
+      added += 1;
+    });
+    persist({ ...data, weekends: mergedWeekends });
+    setImportMsg(`Se importaron ${added} fin(es) de semana historicos.`);
+  };
+
+  const addWeekend = () => {
+    if (!newWeekendDate || data.weekends[newWeekendDate]) return;
+    const attendance = {};
+    data.friends.forEach((f) => {
+      attendance[f] = false;
+    });
+    persist({
+      ...data,
+      weekends: { ...data.weekends, [newWeekendDate]: { plan: "", attendance } },
+    });
+    setShowAddWeekend(false);
+  };
+
+  const deleteWeekend = (date) => {
+    if (!isAdmin) return;
+    setDeleteWeekendConfirm(date);
+  };
+
+  const confirmDeleteWeekend = () => {
+    if (!deleteWeekendConfirm) return;
+    const nextWeekends = { ...data.weekends };
+    delete nextWeekends[deleteWeekendConfirm];
+    persist({ ...data, weekends: nextWeekends });
+    setDeleteWeekendConfirm(null);
+  };
+
+  const toggleWeekendAttendance = (date, friend) => {
+    if (!isAdmin) return;
+    const entry = data.weekends[date];
+    const current = entry.attendance[friend] || false;
+    persist({
+      ...data,
+      weekends: {
+        ...data.weekends,
+        [date]: { ...entry, attendance: { ...entry.attendance, [friend]: !current } },
+      },
+    });
+  };
+
+  const saveWeekendPlan = (date, plan) => {
+    if (!isAdmin) return;
+    const entry = data.weekends[date];
+    persist({
+      ...data,
+      weekends: { ...data.weekends, [date]: { ...entry, plan } },
+    });
+  };
+
+  const saveQuoteOfWeek = () => {
+    if (!isAdmin) return;
+    const text = quoteTextDraft.trim();
+    const author = quoteAuthorDraft.trim();
+    if (!text || !author) return;
+    persist({ ...data, quoteOfWeek: { text, author } });
+    setEditingQuote(false);
+  };
+
+  const addContactMessage = (type, text) => {
+    const clean = (text || "").trim();
+    if (!clean || !myName) return;
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      type,
+      author: myName,
+      text: clean,
+      ts: Date.now(),
+    };
+    persist({ ...data, contactMessages: [...data.contactMessages, entry] });
+    if (type === "developer") {
+      setDevMessageDraft("");
+      setDevMessageSent(true);
+    } else {
+      setSuggestionDraft("");
+      setSuggestionSent(true);
     }
   };
 
@@ -1547,15 +2136,14 @@ export default function JuntadasSub() {
 
           {welcomeChecked && !welcomeDismissed && (
             <div className="bg-stone-900 border border-stone-700 rounded-lg p-4 mb-5">
-              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido al foro de juntadas de La Sub! 🔥</p>
+              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido a Juntadas Sub! 🔥</p>
               <p className="text-stone-400 text-sm mb-2">
                 Acá vamos a ir dejando registrado quién vino y quién faltó a cada juntada semanal, quién fue
-                anfitrión, y todo lo que se les cante compartir en el foro.
+                anfitrión, y todo lo demás que se les cante sumar: temas para charlar, trivia, y lo que venga.
               </p>
               <p className="text-stone-400 text-sm">
                 Para entrar: elegí tu nombre en la lista de abajo y creá tu propia contraseña — es la primera y
-                única vez que la vas a tener que inventar, después el dispositivo te va a reconocer solo. Con la
-                sesión iniciada podés cargar tu excusa si faltás y comentar lo que quieras en el foro.
+                única vez que la vas a tener que inventar, después el dispositivo te va a reconocer solo.
               </p>
             </div>
           )}
@@ -1683,6 +2271,13 @@ export default function JuntadasSub() {
 
       <div className="border-b border-stone-800 px-5 py-5 flex items-center justify-between sticky top-0 bg-stone-900/95 backdrop-blur z-10">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-1.5 -ml-1.5 rounded hover:bg-stone-800 text-stone-300"
+            aria-label="Abrir menú"
+          >
+            <Menu size={20} />
+          </button>
           <Flame className="text-orange-600 flex-shrink-0" size={22} />
           <h1 className="font-display text-xl sm:text-2xl font-semibold text-stone-50 tracking-wide uppercase">
             Juntadas Sub
@@ -1710,40 +2305,56 @@ export default function JuntadasSub() {
         </div>
       </div>
 
-      <div className="px-5 pt-4 flex gap-2">
-        <button
-          onClick={() => setActiveTab("planilla")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wide transition-colors ${
-            activeTab === "planilla" ? "bg-orange-600 text-stone-950" : "bg-stone-800 text-stone-400 hover:bg-stone-700"
-          }`}
-        >
-          <Flame size={13} /> Panel General
-        </button>
-        <button
-          onClick={() => setActiveTab("foro")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wide transition-colors ${
-            activeTab === "foro" ? "bg-orange-600 text-stone-950" : "bg-stone-800 text-stone-400 hover:bg-stone-700"
-          }`}
-        >
-          <MessagesSquare size={13} /> Foro
-        </button>
-        <button
-          onClick={() => setActiveTab("trivia")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wide transition-colors ${
-            activeTab === "trivia" ? "bg-orange-600 text-stone-950" : "bg-stone-800 text-stone-400 hover:bg-stone-700"
-          }`}
-        >
-          ⚽ Trivia
-        </button>
-        <button
-          onClick={() => setActiveTab("faq")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wide transition-colors ${
-            activeTab === "faq" ? "bg-orange-600 text-stone-950" : "bg-stone-800 text-stone-400 hover:bg-stone-700"
-          }`}
-        >
-          <HelpCircle size={13} /> FAQ
-        </button>
-      </div>
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-30 flex">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-64 max-w-[80%] bg-stone-900 border-r border-stone-700 h-full flex flex-col">
+            <div className="flex items-center justify-between px-4 py-5 border-b border-stone-800">
+              <div className="flex items-center gap-2">
+                <Flame className="text-orange-600" size={20} />
+                <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
+                  Juntadas Sub
+                </span>
+              </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-1 rounded hover:bg-stone-800 text-stone-400"
+                aria-label="Cerrar menú"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <nav className="flex-1 py-3">
+              {[
+                { key: "planilla", label: "Panel General", icon: <Flame size={16} /> },
+                { key: "temas", label: "Temas", icon: <Lightbulb size={16} /> },
+                { key: "findes", label: "Fin de Semana", icon: <Sun size={16} /> },
+                { key: "estadisticas", label: "Estadísticas", icon: <BarChart3 size={16} /> },
+                { key: "trivia", label: "Trivia", icon: <span className="text-base leading-none">⚽</span> },
+                { key: "container", label: "Container", icon: <Package size={16} /> },
+                { key: "contacto", label: "Contáctanos", icon: <Mail size={16} /> },
+                { key: "faq", label: "FAQ", icon: <HelpCircle size={16} /> },
+              ].map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    setActiveTab(item.key);
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-mono uppercase tracking-wide transition-colors ${
+                    activeTab === item.key
+                      ? "bg-orange-600 text-stone-950 font-semibold"
+                      : "text-stone-300 hover:bg-stone-800"
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="mx-5 mt-4 bg-red-950 border border-red-800 text-red-200 text-sm rounded px-3 py-2">
@@ -1760,8 +2371,36 @@ export default function JuntadasSub() {
         </button>
       </div>
 
+      {data.container.members.length > 0 && (
+        <div className="mx-5 mt-3 flex items-center gap-2 bg-rose-950/30 border border-rose-900 rounded-lg px-4 py-2.5 text-sm">
+          <Package size={16} className="text-rose-400 flex-shrink-0" />
+          <span className="text-stone-300">
+            <span className="text-rose-300 font-semibold">En el Container:</span>{" "}
+            <span className="text-stone-100">{data.container.members.join(", ")}</span>
+          </span>
+        </div>
+      )}
+
       {activeTab === "planilla" && (
         <>
+      <div className="px-5 mt-6">
+        <button
+          onClick={() => {
+            setActiveTab("temas");
+            setTopicsRoundIndex(0);
+          }}
+          className="w-full bg-stone-800 hover:bg-stone-750 border border-stone-700 hover:border-orange-600 rounded-lg px-4 py-3 text-left transition-colors flex items-center gap-3"
+        >
+          <Lightbulb size={20} className="text-orange-500 flex-shrink-0" />
+          <div>
+            <div className="font-display font-semibold text-stone-50 text-sm uppercase tracking-wide">
+              ¿De qué vamos a hablar la próxima semana?
+            </div>
+            <div className="text-stone-500 text-xs">Proponé los temas que quieras que se hablen en la próxima semanal.</div>
+          </div>
+        </button>
+      </div>
+
       {isAdmin && showSettings && (
         <div className="mx-5 mt-4 bg-stone-800 border border-stone-700 rounded-lg p-4">
           <div className="text-stone-300 text-xs font-mono uppercase tracking-wider mb-2">
@@ -1833,7 +2472,8 @@ export default function JuntadasSub() {
               </button>
             </div>
             <p className="text-stone-500 text-xs mt-2">
-              Cambia el nombre en el plantel, en toda la planilla histórica y en los comentarios del foro.
+              Cambia el nombre en el plantel, en toda la planilla histórica, los temas, los findes, el Container y
+              la trivia.
             </p>
           </div>
 
@@ -1966,6 +2606,67 @@ export default function JuntadasSub() {
         <p className="text-stone-500 text-xs mt-2">
           Confiab. = % de las faltas que fueron avisadas. Racha = juntadas seguidas viniendo, contando desde la más reciente.
         </p>
+      </div>
+
+      <div className="px-5 mt-6">
+        <div className="bg-stone-800 border border-amber-800/40 rounded-lg p-4">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <span className="text-amber-500 text-xs font-mono uppercase tracking-wider flex items-center gap-1.5">
+              <Quote size={13} /> Frase de la semana
+            </span>
+            {isAdmin && !editingQuote && (
+              <button
+                onClick={() => {
+                  setEditingQuote(true);
+                  setQuoteTextDraft(data.quoteOfWeek.text);
+                  setQuoteAuthorDraft(data.quoteOfWeek.author);
+                }}
+                className="text-stone-500 hover:text-orange-500 flex-shrink-0"
+                aria-label="Editar frase"
+              >
+                <Pencil size={13} />
+              </button>
+            )}
+          </div>
+
+          {editingQuote ? (
+            <div className="space-y-2">
+              <textarea
+                value={quoteTextDraft}
+                onChange={(e) => setQuoteTextDraft(e.target.value)}
+                rows={2}
+                placeholder="La frase..."
+                className="w-full bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <input
+                type="text"
+                value={quoteAuthorDraft}
+                onChange={(e) => setQuoteAuthorDraft(e.target.value)}
+                placeholder="Quién la dijo..."
+                className="w-full bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <div className="flex gap-2">
+                <button onClick={() => setEditingQuote(false)} className="text-xs text-stone-400 hover:text-stone-200">
+                  Cancelar
+                </button>
+                <button
+                  onClick={saveQuoteOfWeek}
+                  disabled={!quoteTextDraft.trim() || !quoteAuthorDraft.trim()}
+                  className="text-xs text-amber-500 hover:text-amber-400 font-semibold disabled:opacity-40"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          ) : data.quoteOfWeek.text ? (
+            <>
+              <p className="text-stone-100 text-base italic leading-snug">"{data.quoteOfWeek.text}"</p>
+              <p className="text-stone-500 text-sm mt-1">— {data.quoteOfWeek.author}</p>
+            </>
+          ) : (
+            <p className="text-stone-600 text-sm italic">Todavía no hay frase cargada.</p>
+          )}
+        </div>
       </div>
 
       <div className="px-5 mt-8">
@@ -2183,73 +2884,167 @@ export default function JuntadasSub() {
         </>
       )}
 
-      {activeTab === "foro" && (
+      {activeTab === "temas" && (
         <div className="px-5 mt-6">
           <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
-            Foro semanal
+            Temas para la próxima semanal
           </h2>
-          <p className="text-stone-500 text-xs mb-4">Un hilo de comentarios por cada juntada.</p>
+          <p className="text-stone-500 text-xs mb-4">
+            Lista colaborativa, sin votación. Hasta 2 temas por persona, no es obligatorio participar.
+          </p>
 
           {weekDates.length === 0 ? (
             <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-8 text-center text-stone-500 text-sm">
-              Todavía no hay juntadas cargadas en la planilla.
+              Todavía no hay juntadas cargadas — la ronda de temas arranca con la primera.
             </div>
           ) : (
-            <div className="space-y-4">
-              {weekDates.map((date) => {
-                const weekComments = data.comments[date] || [];
-                const presentCount = friends.filter((f) => normalizeCell(data.weeks[date][f]).attended).length;
-                const hostName = friends.find((f) => normalizeCell(data.weeks[date][f]).host);
-                return (
-                  <div key={date} className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
-                    <div className="px-4 py-3 border-b border-stone-700 flex items-center justify-between flex-wrap gap-1">
-                      <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
-                        {formatDate(date)}
-                      </span>
-                      <span className="text-stone-400 text-xs font-mono">
-                        {presentCount} presentes{hostName ? ` · anfitrión: ${hostName}` : ""}
-                      </span>
-                    </div>
+            (() => {
+              const openRound = weekDates[0];
+              const maxIndex = weekDates.length - 1;
+              const safeIndex = Math.min(topicsRoundIndex, maxIndex);
+              const round = weekDates[safeIndex];
+              const isOpen = round === openRound;
+              const roundTopics = data.topics[round] || [];
+              const myCount = myName ? roundTopics.filter((t) => t.author === myName).length : 0;
 
-                    <div className="px-4 py-3 space-y-3 max-h-64 overflow-y-auto">
-                      {weekComments.length === 0 ? (
-                        <p className="text-stone-500 text-xs italic">Todavía nadie comentó esta juntada.</p>
-                      ) : (
-                        weekComments.map((c) => (
-                          <div key={c.id}>
-                            <div className="flex items-baseline gap-2">
-                              <span className="text-stone-50 text-sm font-medium">{c.author}</span>
-                              <span className="text-stone-500 text-xs font-mono">{formatDateTime(c.ts)}</span>
-                            </div>
-                            <p className="text-stone-300 text-sm whitespace-pre-wrap">{c.text}</p>
+              return (
+                <div className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+                  <div className="px-4 py-3 border-b border-stone-700 flex items-center justify-between">
+                    <button
+                      onClick={() => setTopicsRoundIndex((i) => Math.min(i + 1, maxIndex))}
+                      disabled={safeIndex >= maxIndex}
+                      className="text-stone-400 hover:text-stone-100 disabled:opacity-30 disabled:cursor-not-allowed px-1"
+                      aria-label="Semanal anterior"
+                    >
+                      ‹
+                    </button>
+                    <div className="text-center">
+                      <div className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
+                        {isOpen ? "Próxima semanal" : `Semanal del ${formatDate(round)}`}
+                      </div>
+                      {isOpen && (
+                        <div className="text-emerald-500 text-xs font-mono uppercase">Ronda abierta</div>
+                      )}
+                      {!isOpen && <div className="text-stone-500 text-xs font-mono uppercase">Archivada</div>}
+                    </div>
+                    <button
+                      onClick={() => setTopicsRoundIndex((i) => Math.max(i - 1, 0))}
+                      disabled={safeIndex <= 0}
+                      className="text-stone-400 hover:text-stone-100 disabled:opacity-30 disabled:cursor-not-allowed px-1"
+                      aria-label="Semanal siguiente"
+                    >
+                      ›
+                    </button>
+                  </div>
+
+                  <div className="px-4 py-3 space-y-3 max-h-80 overflow-y-auto">
+                    {roundTopics.length === 0 ? (
+                      <p className="text-stone-500 text-xs italic">Todavía nadie propuso ningún tema acá.</p>
+                    ) : (
+                      roundTopics.map((t) => {
+                        const isMine = isOpen && t.author === myName;
+                        const isEditing = editingTopicId === t.id;
+                        return (
+                          <div key={t.id} className="flex items-start justify-between gap-2">
+                            {isEditing ? (
+                              <div className="flex-1 space-y-1.5">
+                                <textarea
+                                  value={editingTopicText}
+                                  onChange={(e) => setEditingTopicText(e.target.value)}
+                                  maxLength={120}
+                                  rows={2}
+                                  className="w-full bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setEditingTopicId(null)}
+                                    className="text-xs text-stone-400 hover:text-stone-200"
+                                  >
+                                    Cancelar
+                                  </button>
+                                  <button
+                                    onClick={() => saveTopicEdit(round, t.id, editingTopicText)}
+                                    className="text-xs text-orange-500 hover:text-orange-400 font-semibold"
+                                  >
+                                    Guardar
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div>
+                                  <div className="flex items-baseline gap-2">
+                                    <span className="text-stone-50 text-sm font-medium">{t.author}</span>
+                                    <span className="text-stone-500 text-xs font-mono">{formatDateTime(t.ts)}</span>
+                                  </div>
+                                  <p className="text-stone-300 text-sm whitespace-pre-wrap">{t.text}</p>
+                                </div>
+                                {isMine && (
+                                  <div className="flex gap-1.5 flex-shrink-0">
+                                    <button
+                                      onClick={() => {
+                                        setEditingTopicId(t.id);
+                                        setEditingTopicText(t.text);
+                                      }}
+                                      className="text-stone-500 hover:text-orange-500"
+                                      aria-label="Editar tema"
+                                    >
+                                      <Pencil size={13} />
+                                    </button>
+                                    <button
+                                      onClick={() => deleteTopic(round, t.id)}
+                                      className="text-stone-500 hover:text-rose-500"
+                                      aria-label="Borrar tema"
+                                    >
+                                      <X size={13} />
+                                    </button>
+                                  </div>
+                                )}
+                              </>
+                            )}
                           </div>
-                        ))
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {isOpen && (
+                    <div className="px-4 py-3 border-t border-stone-700">
+                      {!myName ? (
+                        <p className="text-stone-500 text-xs italic">Iniciá sesión arriba para proponer un tema.</p>
+                      ) : myCount >= 2 ? (
+                        <p className="text-stone-500 text-xs italic">Ya usaste tus 2 temas en esta ronda.</p>
+                      ) : (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={topicDraft}
+                            onChange={(e) => setTopicDraft(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && addTopic(round)}
+                            maxLength={120}
+                            placeholder="Proponé un tema para charlar..."
+                            className="flex-1 bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                          />
+                          <button
+                            onClick={() => addTopic(round)}
+                            disabled={!topicDraft.trim()}
+                            className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-3 rounded flex items-center justify-center"
+                            aria-label="Proponer tema"
+                          >
+                            <Send size={15} />
+                          </button>
+                        </div>
                       )}
                     </div>
-
-                    <div className="px-4 py-3 border-t border-stone-700 flex gap-2">
-                      <input
-                        type="text"
-                        value={commentDrafts[date] || ""}
-                        onChange={(e) => setCommentDrafts({ ...commentDrafts, [date]: e.target.value })}
-                        onKeyDown={(e) => e.key === "Enter" && addComment(date)}
-                        placeholder={myName ? "Escribí algo sobre esta juntada..." : "Elegí tu nombre arriba para comentar"}
-                        disabled={!myName}
-                        className="flex-1 bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600 disabled:opacity-50"
-                      />
-                      <button
-                        onClick={() => addComment(date)}
-                        disabled={!myName || !(commentDrafts[date] || "").trim()}
-                        className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-3 rounded flex items-center justify-center"
-                        aria-label="Enviar comentario"
-                      >
-                        <Send size={15} />
-                      </button>
+                  )}
+                  {!isOpen && (
+                    <div className="px-4 py-2 border-t border-stone-700">
+                      <p className="text-stone-600 text-xs italic">Semanal archivada — de solo lectura.</p>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  )}
+                </div>
+              );
+            })()
           )}
         </div>
       )}
@@ -2491,6 +3286,751 @@ export default function JuntadasSub() {
         </div>
       )}
 
+      {activeTab === "container" && (
+        <div className="px-5 mt-6">
+          <h2 className="font-display text-lg font-semibold text-stone-100 uppercase tracking-wider mb-1">
+            El Container de La Sub
+          </h2>
+          <p className="text-stone-500 text-xs mb-5">
+            Acá no se juzga, se reflexiona.
+          </p>
+
+          {(() => {
+            const latest = getLatestDate(data.weeks);
+            const currentMembers = data.container.members;
+            const roundVotes = latest ? data.container.votes[latest] || { entry: {}, exit: {} } : { entry: {}, exit: {} };
+            const canVote = myName && data.friends.includes(myName);
+            const myEntryVote = roundVotes.entry ? roundVotes.entry[myName] : undefined;
+            const myExitVote = roundVotes.exit ? roundVotes.exit[myName] : undefined;
+            const entryCandidates = friends.filter((f) => !currentMembers.includes(f));
+
+            return (
+              <>
+                {currentMembers.length > 0 && (
+                  <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-5">
+                    <p className="text-stone-300 text-sm mb-2">
+                      <span className="font-semibold text-stone-50">Actualmente en el Container:</span>
+                    </p>
+                    <div className="space-y-1.5">
+                      {currentMembers.map((name) => {
+                        const since = data.container.since[name];
+                        const duration = since ? weekDates.filter((d) => d >= since).length : 0;
+                        return (
+                          <div key={name} className="flex items-center justify-between text-sm">
+                            <span className="text-stone-100">
+                              {name}{" "}
+                              <span className="text-stone-500 text-xs font-mono">
+                                — {duration} juntada{duration === 1 ? "" : "s"} de reflexión
+                              </span>
+                            </span>
+                            {isAdmin && (
+                              <button
+                                onClick={() => releaseFromContainer(name)}
+                                className="text-xs text-sky-500 hover:text-sky-400 font-mono uppercase"
+                              >
+                                Liberar
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {!latest ? (
+                  <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-6 text-center text-stone-500 text-sm">
+                    Todavía no hay ninguna juntada cargada — la votación arranca con la primera.
+                  </div>
+                ) : (
+                  <>
+                    {/* VOTO DE ENTRADA */}
+                    <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-4">
+                      <h3 className="font-display text-sm font-semibold text-stone-100 uppercase tracking-wide mb-1">
+                        ¿A quién/quiénes mandás al Container esta semana?
+                      </h3>
+                      <p className="text-stone-500 text-xs mb-3">
+                        El Container no es un castigo — es un ratito aparte para repensar cómo viene cada uno.
+                        Votá en anónimo. El Container es un castigo temporal, podés votar a quien vos te parezca
+                        que tiene que tomarse un momento de reflexión para pensar cómo viene. Si estás adentro del
+                        Container, no lo tomes personal, son tus amigos queriendo lo mejor para vos.
+                      </p>
+
+                      {!canVote ? (
+                        <p className="text-stone-500 text-xs italic">Solo los titulares pueden votar.</p>
+                      ) : myEntryVote !== undefined ? (
+                        <p className="text-emerald-400 text-sm">Ya votaste esta ronda. Gracias por participar.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="space-y-1.5">
+                            {entryCandidates.map((f) => (
+                              <label
+                                key={f}
+                                className="flex items-center gap-2 text-sm text-stone-200 bg-stone-900 border border-stone-700 rounded px-3 py-2 cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={entryVoteChoices.includes(f)}
+                                  onChange={(e) => {
+                                    setEntryVoteChoices((prev) =>
+                                      e.target.checked ? [...prev, f] : prev.filter((n) => n !== f)
+                                    );
+                                  }}
+                                  className="accent-rose-600"
+                                />
+                                {f}
+                              </label>
+                            ))}
+                          </div>
+                          <button
+                            onClick={() => castEntryVote(entryVoteChoices)}
+                            className="bg-rose-700 hover:bg-rose-600 text-stone-50 px-4 py-2 rounded font-display font-semibold uppercase text-sm"
+                          >
+                            {entryVoteChoices.length === 0 ? "No mando a nadie" : "Votar"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* VOTO DE SALIDA */}
+                    {currentMembers.length > 0 && (
+                      <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-4">
+                        <h3 className="font-display text-sm font-semibold text-stone-100 uppercase tracking-wide mb-1">
+                          ¿Merece salir del Container ya?
+                        </h3>
+                        <p className="text-stone-500 text-xs mb-3">
+                          Estos son los que están ahí ahora mismo. Votá si ya reflexionaron lo suficiente, o si
+                          preferís que sigan un rato más.
+                        </p>
+
+                        {!canVote ? (
+                          <p className="text-stone-500 text-xs italic">Solo los titulares pueden votar.</p>
+                        ) : myExitVote !== undefined ? (
+                          <p className="text-emerald-400 text-sm">Ya votaste esta ronda. Gracias por participar.</p>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="space-y-1.5">
+                              {currentMembers.map((f) => (
+                                <label
+                                  key={f}
+                                  className="flex items-center gap-2 text-sm text-stone-200 bg-stone-900 border border-stone-700 rounded px-3 py-2 cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={exitVoteChoices.includes(f)}
+                                    onChange={(e) => {
+                                      setExitVoteChoices((prev) =>
+                                        e.target.checked ? [...prev, f] : prev.filter((n) => n !== f)
+                                      );
+                                    }}
+                                    className="accent-emerald-600"
+                                  />
+                                  {f}
+                                </label>
+                              ))}
+                            </div>
+                            <button
+                              onClick={() => castExitVote(exitVoteChoices)}
+                              className="bg-emerald-700 hover:bg-emerald-600 text-stone-50 px-4 py-2 rounded font-display font-semibold uppercase text-sm"
+                            >
+                              {exitVoteChoices.length === 0 ? "Que sigan pensando, todavía no" : "Votar"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {data.container.history.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-2">
+                      Historial del Container
+                    </h3>
+                    <div className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
+                            <th className="text-left px-3 py-2">Nombre</th>
+                            <th className="text-left px-3 py-2">Entró</th>
+                            <th className="text-left px-3 py-2">Salió</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[...data.container.history]
+                            .sort((a, b) => (a.dateOut < b.dateOut ? 1 : -1))
+                            .map((h, i) => (
+                              <tr key={i} className="border-b border-stone-700/50 last:border-0">
+                                <td className="px-3 py-2 text-stone-50 font-medium">{h.name}</td>
+                                <td className="px-3 py-2 text-stone-400 font-mono text-xs">{formatDate(h.dateIn)}</td>
+                                <td className="px-3 py-2 text-stone-400 font-mono text-xs">{formatDate(h.dateOut)}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      )}
+
+      {activeTab === "findes" && (
+        <div className="px-5 mt-6">
+          <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            Fin de Semana
+          </h2>
+          <p className="text-stone-500 text-xs mb-4">Asados, previas, juntadas de sábado — aparte de las de los jueves.</p>
+
+          {(() => {
+            const weekendDates = Object.keys(data.weekends).sort((a, b) => (a < b ? 1 : -1));
+            const totalWeekends = weekendDates.length;
+
+            const weekendStats = friends
+              .map((f) => {
+                const present = weekendDates.filter((d) => data.weekends[d].attendance[f]).length;
+                const pct = totalWeekends ? Math.round((present / totalWeekends) * 100) : 0;
+                return { name: f, present, pct };
+              })
+              .sort((a, b) => b.pct - a.pct || b.present - a.present);
+
+            return (
+              <>
+                {isAdmin && (
+                  <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <button
+                      onClick={() => setShowAddWeekend((s) => !s)}
+                      className="flex items-center gap-1 text-xs font-mono uppercase text-orange-500 hover:text-orange-400"
+                    >
+                      <Plus size={14} /> Finde
+                    </button>
+                    {missingHistoricalWeekends.length > 0 && (
+                      <button
+                        onClick={importHistoricalWeekends}
+                        className="flex items-center gap-1.5 text-xs font-mono uppercase text-sky-500 hover:text-sky-400"
+                      >
+                        <RefreshCw size={12} /> Importar histórico ({missingHistoricalWeekends.length})
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {isAdmin && showAddWeekend && (
+                  <div className="bg-stone-800 border border-stone-700 rounded-lg p-3 mb-4 flex gap-2 items-center">
+                    <input
+                      type="date"
+                      value={newWeekendDate}
+                      onChange={(e) => setNewWeekendDate(e.target.value)}
+                      className="bg-stone-900 border border-stone-700 rounded px-3 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                    />
+                    <button
+                      onClick={addWeekend}
+                      className="bg-orange-600 hover:bg-orange-500 text-stone-950 px-4 py-1.5 rounded font-display font-semibold uppercase text-sm"
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                )}
+
+                {importMsg && <p className="text-emerald-400 text-xs mb-4">{importMsg}</p>}
+
+                {totalWeekends > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-2">
+                      Ranking de findes
+                    </h3>
+                    <div className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
+                            <th className="text-left px-3 py-2 w-8">#</th>
+                            <th className="text-left px-3 py-2">Nombre</th>
+                            <th className="text-right px-3 py-2">Asist.</th>
+                            <th className="text-right px-3 py-2">%</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {weekendStats.map((s, i) => (
+                            <tr key={s.name} className="border-b border-stone-700/50 last:border-0">
+                              <td className="px-3 py-2 text-stone-500 font-mono">{i + 1}</td>
+                              <td className="px-3 py-2 text-stone-50 font-medium">{s.name}</td>
+                              <td className="px-3 py-2 text-right text-stone-300 font-mono">
+                                {s.present}/{totalWeekends}
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono font-semibold text-orange-500">{s.pct}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {weekendDates.length === 0 ? (
+                  <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-8 text-center text-stone-500 text-sm">
+                    Todavía no hay ningún finde cargado.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {weekendDates.map((date) => {
+                      const entry = data.weekends[date];
+                      const siVinieron = friends.filter((f) => entry.attendance[f]);
+                      const noVinieron = friends.filter((f) => !entry.attendance[f]);
+                      const isEditingPlan = editingPlanDate === date;
+                      return (
+                        <div key={date} className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+                          <div className="px-4 py-3 border-b border-stone-700 flex items-center justify-between">
+                            <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm flex items-center gap-1.5">
+                              <Sun size={14} className="text-amber-500" /> {formatDate(date)}
+                            </span>
+                            {isAdmin && (
+                              <button
+                                onClick={() => deleteWeekend(date)}
+                                className="text-stone-600 hover:text-rose-500"
+                                aria-label={`Borrar finde ${formatDate(date)}`}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="px-4 py-3 border-b border-stone-700">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-stone-400 text-xs font-mono uppercase">Plan del día</span>
+                              {isAdmin && !isEditingPlan && (
+                                <button
+                                  onClick={() => {
+                                    setEditingPlanDate(date);
+                                    setEditingPlanText(entry.plan || "");
+                                  }}
+                                  className="text-stone-500 hover:text-orange-500"
+                                  aria-label="Editar plan"
+                                >
+                                  <Pencil size={12} />
+                                </button>
+                              )}
+                            </div>
+                            {isEditingPlan ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  value={editingPlanText}
+                                  onChange={(e) => setEditingPlanText(e.target.value)}
+                                  rows={4}
+                                  className="w-full bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setEditingPlanDate(null)}
+                                    className="text-xs text-stone-400 hover:text-stone-200"
+                                  >
+                                    Cancelar
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      saveWeekendPlan(date, editingPlanText);
+                                      setEditingPlanDate(null);
+                                    }}
+                                    className="text-xs text-orange-500 hover:text-orange-400 font-semibold"
+                                  >
+                                    Guardar
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-stone-300 text-sm whitespace-pre-wrap">
+                                {entry.plan ? entry.plan : <span className="text-stone-600 italic">Sin programa cargado.</span>}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 px-4 py-3">
+                            <div>
+                              <div className="text-emerald-500 text-xs font-mono uppercase mb-1.5">
+                                Sí vinieron ({siVinieron.length})
+                              </div>
+                              <div className="space-y-1">
+                                {siVinieron.length === 0 ? (
+                                  <p className="text-stone-600 text-xs italic">Nadie</p>
+                                ) : (
+                                  siVinieron.map((f) => (
+                                    <button
+                                      key={f}
+                                      onClick={() => toggleWeekendAttendance(date, f)}
+                                      disabled={!isAdmin}
+                                      className={`block text-sm text-stone-100 ${isAdmin ? "hover:text-emerald-400 cursor-pointer" : ""}`}
+                                    >
+                                      {f}
+                                    </button>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-rose-500 text-xs font-mono uppercase mb-1.5">
+                                No vinieron ({noVinieron.length})
+                              </div>
+                              <div className="space-y-1">
+                                {noVinieron.length === 0 ? (
+                                  <p className="text-stone-600 text-xs italic">Nadie</p>
+                                ) : (
+                                  noVinieron.map((f) => (
+                                    <button
+                                      key={f}
+                                      onClick={() => toggleWeekendAttendance(date, f)}
+                                      disabled={!isAdmin}
+                                      className={`block text-sm text-stone-500 ${isAdmin ? "hover:text-rose-400 cursor-pointer" : ""}`}
+                                    >
+                                      {f}
+                                    </button>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          {isAdmin && (
+                            <div className="px-4 pb-3">
+                              <p className="text-stone-600 text-xs italic">Tocá un nombre para moverlo de lista.</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      )}
+
+      {activeTab === "estadisticas" && (
+        <div className="px-5 mt-6">
+          <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            Estadísticas
+          </h2>
+          <p className="text-stone-500 text-xs mb-5">Todo lo que dejaron los jueves, los findes, el Container y la trivia.</p>
+
+          {weekDates.length === 0 ? (
+            <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-8 text-center text-stone-500 text-sm">
+              Todavía no hay datos suficientes — arrancá cargando alguna juntada.
+            </div>
+          ) : (
+            (() => {
+              // ---- GENERAL (jueves) ----
+              const attendancePodium = stats.map((s) => ({ name: s.name, value: s.pct }));
+
+              const bestStreaks = friends.map((f) => {
+                let best = 0;
+                let current = 0;
+                weekDatesAsc.forEach((d) => {
+                  const cell = normalizeCell(data.weeks[d][f]);
+                  if (cell.attended) {
+                    current += 1;
+                    best = Math.max(best, current);
+                  } else {
+                    current = 0;
+                  }
+                });
+                return { name: f, best };
+              });
+              const currentStreaks = stats
+                .map((s) => ({ name: s.name, streak: s.streak }))
+                .sort((a, b) => b.streak - a.streak)
+                .slice(0, 5);
+              const bestStreaksSorted = [...bestStreaks].sort((a, b) => b.best - a.best).slice(0, 5);
+
+              const evolutionPoints = weekDatesAsc.map((d) => friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length);
+              const evolutionLabels = weekDatesAsc.map((d) => formatDateShort(d));
+
+              // ---- FIN DE SEMANA ----
+              const weekendDates = Object.keys(data.weekends).sort((a, b) => (a < b ? 1 : -1));
+              const totalWeekends = weekendDates.length;
+              const weekendStatsFull = friends.map((f) => {
+                const present = weekendDates.filter((d) => data.weekends[d].attendance[f]).length;
+                const pct = totalWeekends ? Math.round((present / totalWeekends) * 100) : 0;
+                return { name: f, present, pct };
+              });
+              const weekendPodium = [...weekendStatsFull].sort((a, b) => b.pct - a.pct).map((s) => ({ name: s.name, value: s.pct }));
+
+              // ---- CONTAINER ----
+              const containerCounts = friends
+                .map((f) => {
+                  const historyCount = data.container.history.filter((h) => h.name === f).length;
+                  const currentlyIn = data.container.members.includes(f) ? 1 : 0;
+                  return { name: f, value: historyCount + currentlyIn };
+                })
+                .filter((c) => c.value > 0)
+                .sort((a, b) => b.value - a.value);
+
+              const containerDuration = friends
+                .map((f) => {
+                  let total = 0;
+                  data.container.history
+                    .filter((h) => h.name === f)
+                    .forEach((h) => {
+                      total += weekDates.filter((d) => d >= h.dateIn && d <= h.dateOut).length;
+                    });
+                  if (data.container.members.includes(f) && data.container.since[f]) {
+                    total += weekDates.filter((d) => d >= data.container.since[f]).length;
+                  }
+                  return { name: f, value: total };
+                })
+                .filter((c) => c.value > 0)
+                .sort((a, b) => b.value - a.value);
+
+              // ---- TRIVIA ----
+              const triviaDates = Object.keys(data.trivia);
+              const triviaStatsFull = friends
+                .map((f) => {
+                  let correct = 0;
+                  let played = 0;
+                  triviaDates.forEach((d) => {
+                    const a = data.trivia[d].answers[f];
+                    if (a) {
+                      played += 1;
+                      if (a.correct) correct += 1;
+                    }
+                  });
+                  return { name: f, correct, played };
+                })
+                .filter((s) => s.played > 0)
+                .sort((a, b) => b.correct - a.correct || b.played - a.played);
+              const triviaPodium = triviaStatsFull.map((s) => ({ name: s.name, value: s.correct }));
+
+              return (
+                <div className="space-y-8">
+                  {/* GENERAL */}
+                  <div>
+                    <h3 className="font-display text-sm font-semibold text-orange-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <Flame size={14} /> General — Jueves
+                    </h3>
+
+                    <p className="text-stone-500 text-xs font-mono uppercase mb-2">Podio de asistencia</p>
+                    <Podium items={attendancePodium} unit="%" />
+
+                    <div className="grid grid-cols-2 gap-4 mt-5">
+                      <div>
+                        <p className="text-stone-500 text-xs font-mono uppercase mb-2">Racha actual (top 5)</p>
+                        {currentStreaks.filter((s) => s.streak > 0).length === 0 ? (
+                          <p className="text-stone-600 text-xs italic">Nadie tiene racha activa.</p>
+                        ) : (
+                          currentStreaks
+                            .filter((s) => s.streak > 0)
+                            .map((s) => (
+                              <BarRow
+                                key={s.name}
+                                label={s.name}
+                                value={s.streak}
+                                max={currentStreaks[0].streak || 1}
+                                color="bg-orange-600"
+                              />
+                            ))
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-stone-500 text-xs font-mono uppercase mb-2">Mejor racha histórica</p>
+                        {bestStreaksSorted.filter((s) => s.best > 0).length === 0 ? (
+                          <p className="text-stone-600 text-xs italic">Sin datos todavía.</p>
+                        ) : (
+                          bestStreaksSorted
+                            .filter((s) => s.best > 0)
+                            .map((s) => (
+                              <BarRow
+                                key={s.name}
+                                label={s.name}
+                                value={s.best}
+                                max={bestStreaksSorted[0].best || 1}
+                                color="bg-amber-500"
+                              />
+                            ))
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-stone-500 text-xs font-mono uppercase mt-5 mb-2">Evolución de asistencia por juntada</p>
+                    <div className="bg-stone-800 border border-stone-700 rounded-lg p-3">
+                      <AttendanceLineChart points={evolutionPoints} labels={evolutionLabels} maxY={friends.length} />
+                    </div>
+                  </div>
+
+                  {/* FIN DE SEMANA */}
+                  {totalWeekends > 0 && (
+                    <div>
+                      <h3 className="font-display text-sm font-semibold text-amber-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <Sun size={14} /> Fin de Semana
+                      </h3>
+
+                      <p className="text-stone-500 text-xs font-mono uppercase mb-2">Podio de asistencia a los findes</p>
+                      <Podium items={weekendPodium} unit="%" />
+
+                      <p className="text-stone-500 text-xs font-mono uppercase mt-5 mb-2">Jueves vs. Finde, por persona</p>
+                      <div className="bg-stone-800 border border-stone-700 rounded-lg p-3">
+                        {friends.map((f) => {
+                          const thu = stats.find((s) => s.name === f);
+                          const wknd = weekendStatsFull.find((s) => s.name === f);
+                          return (
+                            <div key={f} className="mb-3 last:mb-0">
+                              <p className="text-stone-200 text-xs font-medium mb-1">{f}</p>
+                              <BarRow label="Jueves" value={thu ? thu.pct : 0} max={100} color="bg-orange-600" displayValue={`${thu ? thu.pct : 0}%`} />
+                              <BarRow label="Finde" value={wknd ? wknd.pct : 0} max={100} color="bg-amber-500" displayValue={`${wknd ? wknd.pct : 0}%`} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* CONTAINER */}
+                  {containerCounts.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-sm font-semibold text-rose-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <Package size={14} /> Container
+                      </h3>
+
+                      <p className="text-stone-500 text-xs font-mono uppercase mb-2">Más mandados al Container</p>
+                      <div className="bg-stone-800 border border-stone-700 rounded-lg p-3 mb-4">
+                        {containerCounts.map((c) => (
+                          <BarRow key={c.name} label={c.name} value={c.value} max={containerCounts[0].value} color="bg-rose-600" />
+                        ))}
+                      </div>
+
+                      {containerDuration.length > 0 && (
+                        <>
+                          <p className="text-stone-500 text-xs font-mono uppercase mb-2">Tiempo acumulado adentro (en juntadas)</p>
+                          <div className="bg-stone-800 border border-stone-700 rounded-lg p-3">
+                            {containerDuration.map((c) => (
+                              <BarRow key={c.name} label={c.name} value={c.value} max={containerDuration[0].value} color="bg-rose-700" />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TRIVIA */}
+                  {triviaPodium.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-sm font-semibold text-sky-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        ⚽ Trivia
+                      </h3>
+                      <p className="text-stone-500 text-xs font-mono uppercase mb-2">Podio de puntos</p>
+                      <Podium items={triviaPodium} />
+                    </div>
+                  )}
+                </div>
+              );
+            })()
+          )}
+        </div>
+      )}
+
+      {activeTab === "contacto" && (
+        <div className="px-5 mt-6">
+          <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            Contáctanos
+          </h2>
+          <p className="text-stone-500 text-xs mb-5">Tus mensajes acá solo los ve el admin.</p>
+
+          <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-lg">💼</span>
+              <h3 className="font-display text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                ¿Te gustaría formar parte del equipo de developers de La Sub?
+              </h3>
+            </div>
+            <p className="text-stone-500 text-xs mb-3">
+              Dejanos un mensaje o mandanos tu currículum si te interesa sumarte al equipo de developers de La
+              Sub. Nos vamos a estar comunicando con vos (o no).
+            </p>
+            {!myName ? (
+              <p className="text-stone-500 text-xs italic">Iniciá sesión arriba para postularte.</p>
+            ) : devMessageSent ? (
+              <p className="text-emerald-400 text-sm">¡Gracias por postularte! Te vamos a estar contactando.</p>
+            ) : (
+              <div className="space-y-2">
+                <textarea
+                  value={devMessageDraft}
+                  onChange={(e) => setDevMessageDraft(e.target.value)}
+                  rows={3}
+                  placeholder="Tu currículum / mensaje..."
+                  className="w-full bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                />
+                <button
+                  onClick={() => addContactMessage("developer", devMessageDraft)}
+                  disabled={!devMessageDraft.trim()}
+                  className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 py-2 rounded font-display font-semibold uppercase text-sm"
+                >
+                  Enviar postulación
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-lg">📮</span>
+              <h3 className="font-display text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                Buzón de sugerencias
+              </h3>
+            </div>
+            <p className="text-stone-500 text-xs mb-3">
+              ¿Se te ocurrió algo para la app, una idea, una queja, un chisme? Dejalo acá. Y si tenés ganas de
+              insultar a los developers de La Sub, este también es tu espacio para hacerlo.
+            </p>
+            {!myName ? (
+              <p className="text-stone-500 text-xs italic">Iniciá sesión arriba para dejar tu sugerencia.</p>
+            ) : suggestionSent ? (
+              <p className="text-emerald-400 text-sm">¡Gracias! Ya quedó registrada.</p>
+            ) : (
+              <div className="space-y-2">
+                <textarea
+                  value={suggestionDraft}
+                  onChange={(e) => setSuggestionDraft(e.target.value)}
+                  rows={3}
+                  placeholder="Tu sugerencia..."
+                  className="w-full bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                />
+                <button
+                  onClick={() => addContactMessage("suggestion", suggestionDraft)}
+                  disabled={!suggestionDraft.trim()}
+                  className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 py-2 rounded font-display font-semibold uppercase text-sm"
+                >
+                  Enviar sugerencia
+                </button>
+              </div>
+            )}
+          </div>
+
+          {isAdmin && data.contactMessages.length > 0 && (
+            <div className="mt-6">
+              <h3 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-2">
+                Mensajes recibidos (solo admin)
+              </h3>
+              <div className="space-y-2">
+                {[...data.contactMessages]
+                  .sort((a, b) => b.ts - a.ts)
+                  .map((m) => (
+                    <div key={m.id} className="bg-stone-800 border border-stone-700 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-stone-50 text-sm font-medium">
+                          {m.author}{" "}
+                          <span className="text-stone-500 text-xs font-mono uppercase">
+                            {m.type === "developer" ? "· postulación" : "· sugerencia"}
+                          </span>
+                        </span>
+                        <span className="text-stone-500 text-xs font-mono">{formatDateTime(m.ts)}</span>
+                      </div>
+                      <p className="text-stone-300 text-sm whitespace-pre-wrap">{m.text}</p>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {showPinModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-6 z-20">
           <div className="bg-stone-800 border border-stone-700 rounded-lg p-6 w-full max-w-xs">
@@ -2628,6 +4168,35 @@ export default function JuntadasSub() {
                   deleteTrivia(deleteTriviaConfirm);
                   setDeleteTriviaConfirm(null);
                 }}
+                className="flex-1 bg-rose-700 hover:bg-rose-600 text-stone-50 py-2 rounded text-sm font-semibold"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteWeekendConfirm && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-6 z-20">
+          <div className="bg-stone-800 border border-stone-700 rounded-lg p-6 w-full max-w-xs">
+            <h3 className="font-display text-lg font-semibold text-stone-50 uppercase tracking-wide mb-3">
+              Borrar finde
+            </h3>
+            <p className="text-stone-300 text-sm mb-5">
+              ¿Eliminar el finde del{" "}
+              <span className="text-stone-50 font-medium">{formatDate(deleteWeekendConfirm)}</span>? Se borra el
+              plan y la asistencia cargada. No se puede deshacer.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteWeekendConfirm(null)}
+                className="flex-1 bg-stone-700 hover:bg-stone-600 text-stone-200 py-2 rounded text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDeleteWeekend}
                 className="flex-1 bg-rose-700 hover:bg-rose-600 text-stone-50 py-2 rounded text-sm font-semibold"
               >
                 Eliminar
