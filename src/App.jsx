@@ -3292,7 +3292,7 @@ export default function JuntadasSub() {
           {(() => {
             const triviaDates = Object.keys(data.trivia);
             if (triviaDates.length === 0) return null;
-            const triviaStats = friends
+            const triviaStats = [...friends, ...data.guests]
               .map((f) => {
                 let correct = 0;
                 let played = 0;
@@ -3968,7 +3968,7 @@ export default function JuntadasSub() {
 
               // ---- TRIVIA ----
               const triviaDates = Object.keys(data.trivia);
-              const triviaStatsFull = friends
+              const triviaStatsFull = [...friends, ...data.guests]
                 .map((f) => {
                   let correct = 0;
                   let played = 0;
