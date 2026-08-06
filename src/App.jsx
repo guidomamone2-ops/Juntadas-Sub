@@ -65,7 +65,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Cómo funciona la Trivia?",
-    a: 'Se genera una pregunta nueva cada vez que el admin agrega una juntada — una por juntada, la misma para todos. Tenés que iniciar sesión para jugar. Al entrar ves un botón "Comenzar" — recién ahí aparece la pregunta y tenés 10 segundos para elegir una opción, así no da tiempo a buscarla. Acertar suma un punto al ranking de Trivia.',
+    a: 'Sale una pregunta de un banco fijo cada vez que el admin agrega una juntada — una por juntada, la misma para todos. Tenés que iniciar sesión para jugar. Al entrar ves un botón "Comenzar" — recién ahí aparece la pregunta y tenés 10 segundos para elegir una opción, así no da tiempo a buscarla. Acertar suma un punto al ranking de Trivia.',
   },
   {
     q: "¿Mi contraseña es segura?",
@@ -74,6 +74,85 @@ const FAQ_ITEMS = [
   {
     q: "¿Qué es el Container?",
     a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — entran los 2 más votados (o más si hay empate). También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
+  },
+];
+
+// Banco fijo de preguntas de trivia (cargadas a mano, no generadas por IA).
+const TRIVIA_BANK = [
+  {
+    question: "¿Qué jugador disputó más finales de Champions League sin haberla ganado nunca?",
+    options: ["Michael Ballack", "Gianluigi Buffon", "Pavel Nedvěd", "Antoine Griezmann"],
+    correctIndex: 1,
+  },
+  {
+    question: "¿Cuál fue el último club no europeo en ganar la Copa Intercontinental?",
+    options: ["Boca Juniors", "São Paulo", "Corinthians", "Internacional"],
+    correctIndex: 2,
+  },
+  {
+    question: "¿Quién fue el último argentino en ganar el Balón de Oro antes de Lionel Messi?",
+    options: ["Diego Maradona", "Mario Kempes", "Omar Sívori", "Alfredo Di Stéfano"],
+    correctIndex: 2,
+  },
+  {
+    question: "¿Qué selección eliminó a Argentina en el Mundial 2002?",
+    options: ["Inglaterra", "Suecia", "Nigeria", "Ninguna de las anteriores"],
+    correctIndex: 3,
+  },
+  {
+    question: "¿Cuál de estos clubes nunca jugó una final de la Champions League?",
+    options: ["Villarreal", "Valencia", "Bayer Leverkusen", "Arsenal"],
+    correctIndex: 0,
+  },
+  {
+    question: "¿Quién fue el goleador de la Copa Libertadores 2018?",
+    options: ["Darío Benedetto", "Rafael Santos Borré", "Miguel Borja", "Wilson Morelo"],
+    correctIndex: 3,
+  },
+  {
+    question: "¿Qué jugador ganó más Champions League?",
+    options: ["Cristiano Ronaldo", "Paolo Maldini", "Paco Gento", "Dani Carvajal"],
+    correctIndex: 2,
+  },
+  {
+    question: "¿Qué selección ganó un Mundial habiendo perdido el partido inaugural?",
+    options: ["Italia", "España", "Argentina", "Francia"],
+    correctIndex: 2,
+  },
+  {
+    question: "¿Quién convirtió el primer gol del Mundial de Qatar 2022?",
+    options: ["Lionel Messi", "Enner Valencia", "Bukayo Saka", "Cody Gakpo"],
+    correctIndex: 1,
+  },
+  {
+    question: "¿Qué club eliminó al Barcelona del histórico 8-2 en Lisboa?",
+    options: ["Bayern Múnich", "PSG", "Liverpool", "Manchester City"],
+    correctIndex: 0,
+  },
+  {
+    question: "¿Qué arquero ganó el Balón de Oro de un Mundial?",
+    options: ["Oliver Kahn", "Gianluigi Buffon", "Iker Casillas", "Manuel Neuer"],
+    correctIndex: 0,
+  },
+  {
+    question: "¿Cuál de estos jugadores nunca compartió equipo con Cristiano Ronaldo?",
+    options: ["Luka Modrić", "Ángel Di María", "Kaká", "Andrés Iniesta"],
+    correctIndex: 3,
+  },
+  {
+    question: "¿Qué país perdió dos finales consecutivas de la Copa América contra el mismo rival?",
+    options: ["Brasil", "Paraguay", "Argentina", "Uruguay"],
+    correctIndex: 2,
+  },
+  {
+    question: "¿Cuál fue el primer campeón invicto de la Champions League en el siglo XXI?",
+    options: ["Barcelona 2006", "Manchester United 2008", "Inter 2010", "Bayern 2013"],
+    correctIndex: 1,
+  },
+  {
+    question: "¿Quién fue el máximo goleador de la Champions League 2011-12?",
+    options: ["Cristiano Ronaldo", "Lionel Messi", "Mario Gómez", "Karim Benzema"],
+    correctIndex: 1,
   },
 ];
 
@@ -1247,6 +1326,7 @@ export default function JuntadasSub() {
   const [activeTab, setActiveTab] = useState("planilla");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [entryVoteChoices, setEntryVoteChoices] = useState([]);
+  const [showContainerResults, setShowContainerResults] = useState(false);
   const [exitVoteChoices, setExitVoteChoices] = useState([]);
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
@@ -1547,44 +1627,37 @@ export default function JuntadasSub() {
     setEditingTopicId(null);
   };
 
-  const generateTriviaForDate = async (targetDate, baseData) => {
+  const generateTriviaForDate = (targetDate, baseData, forceRandom = false) => {
     setTriviaLoading(true);
     setTriviaError("");
     try {
-      const response = await fetch("/api/trivia", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetDate }),
-      });
-      const parsed = await response.json();
-      if (!response.ok) {
-        throw new Error(parsed.error || "Error generando la trivia");
-      }
-      if (
-        !parsed.question ||
-        !Array.isArray(parsed.options) ||
-        parsed.options.length !== 4 ||
-        typeof parsed.correctIndex !== "number" ||
-        parsed.correctIndex < 0 ||
-        parsed.correctIndex > 3
-      ) {
-        throw new Error("Formato inesperado");
+      let picked;
+      if (forceRandom) {
+        const currentQuestionText = baseData.trivia[targetDate] ? baseData.trivia[targetDate].question : null;
+        const candidates = TRIVIA_BANK.filter((q) => q.question !== currentQuestionText);
+        const pool = candidates.length > 0 ? candidates : TRIVIA_BANK;
+        picked = pool[Math.floor(Math.random() * pool.length)];
+      } else {
+        const allDatesAsc = Object.keys(baseData.weeks).sort();
+        let idx = allDatesAsc.indexOf(targetDate);
+        if (idx === -1) idx = allDatesAsc.length;
+        picked = TRIVIA_BANK[idx % TRIVIA_BANK.length];
       }
       persist({
         ...baseData,
         trivia: {
           ...baseData.trivia,
           [targetDate]: {
-            question: parsed.question,
-            options: parsed.options,
-            correctIndex: parsed.correctIndex,
+            question: picked.question,
+            options: picked.options,
+            correctIndex: picked.correctIndex,
             generatedAt: Date.now(),
             answers: {},
           },
         },
       });
     } catch (e) {
-      setTriviaError("No se pudo generar la trivia de esta juntada. Probá de nuevo.");
+      setTriviaError("No se pudo cargar la trivia de esta juntada. Probá de nuevo.");
     } finally {
       setTriviaLoading(false);
     }
@@ -3056,7 +3129,7 @@ export default function JuntadasSub() {
               Trivia de la juntada ⚽
             </h2>
             <span className="flex items-center gap-1 text-stone-500 text-xs font-mono">
-              <Sparkles size={12} /> generada por IA
+              <Sparkles size={12} /> banco fijo de preguntas
             </span>
           </div>
           <p className="text-stone-500 text-xs mb-4">Una pregunta por juntada, un punto — la misma para todos.</p>
@@ -3194,7 +3267,7 @@ export default function JuntadasSub() {
                   <div className="mt-4 pt-3 border-t border-stone-700 flex flex-wrap items-center gap-3">
                     {Object.keys(q.answers).length === 0 ? (
                       <button
-                        onClick={() => generateTriviaForDate(latest, data)}
+                        onClick={() => generateTriviaForDate(latest, data, true)}
                         className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-200 font-mono uppercase"
                       >
                         <RefreshCw size={12} /> Regenerar pregunta
@@ -3303,6 +3376,34 @@ export default function JuntadasSub() {
             const myEntryVote = roundVotes.entry ? roundVotes.entry[myName] : undefined;
             const myExitVote = roundVotes.exit ? roundVotes.exit[myName] : undefined;
             const entryCandidates = friends.filter((f) => !currentMembers.includes(f));
+
+            const entryVoteCounts = {};
+            let entryVotedCount = 0;
+            let entryNoneCount = 0;
+            Object.values(roundVotes.entry || {}).forEach((choices) => {
+              entryVotedCount += 1;
+              if (!choices || choices.length === 0) {
+                entryNoneCount += 1;
+                return;
+              }
+              choices.forEach((c) => {
+                entryVoteCounts[c] = (entryVoteCounts[c] || 0) + 1;
+              });
+            });
+
+            const exitVoteCounts = {};
+            let exitVotedCount = 0;
+            let exitNoneCount = 0;
+            Object.values(roundVotes.exit || {}).forEach((choices) => {
+              exitVotedCount += 1;
+              if (!choices || choices.length === 0) {
+                exitNoneCount += 1;
+                return;
+              }
+              choices.forEach((c) => {
+                exitVoteCounts[c] = (exitVoteCounts[c] || 0) + 1;
+              });
+            });
 
             return (
               <>
@@ -3440,6 +3541,91 @@ export default function JuntadasSub() {
                       </div>
                     )}
                   </>
+                )}
+
+                {isAdmin && latest && (
+                  <div className="bg-stone-800 border border-sky-800/40 rounded-lg p-4 mb-6">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-display text-sm font-semibold text-sky-400 uppercase tracking-wider">
+                        Resultados en vivo (solo admin)
+                      </h3>
+                      <button
+                        onClick={() => setShowContainerResults((s) => !s)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono uppercase tracking-wide flex-shrink-0 ${
+                          showContainerResults
+                            ? "bg-sky-700 text-stone-50 hover:bg-sky-600"
+                            : "bg-stone-700 text-stone-300 hover:bg-stone-600"
+                        }`}
+                      >
+                        {showContainerResults ? "Ocultar" : "Publicar resultados"}
+                      </button>
+                    </div>
+
+                    {!showContainerResults ? (
+                      <p className="text-stone-500 text-xs italic mt-2">
+                        Los resultados están ocultos. Tocá "Publicar resultados" para verlos.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-stone-500 text-xs mb-3">
+                          Los votos siguen siendo anónimos — acá solo se ve cuántos votos tiene cada opción, no
+                          quién votó qué.
+                        </p>
+
+                        <p className="text-stone-400 text-xs font-mono uppercase mb-1.5">
+                          Entrada — {entryVotedCount}/{friends.length} votaron
+                        </p>
+                        {Object.keys(entryVoteCounts).length === 0 && entryNoneCount === 0 ? (
+                          <p className="text-stone-600 text-xs italic mb-4">Todavía nadie votó.</p>
+                    ) : (
+                      <div className="mb-4 space-y-1">
+                        {Object.entries(entryVoteCounts)
+                          .sort((a, b) => b[1] - a[1])
+                          .map(([name, count]) => (
+                            <div key={name} className="flex justify-between text-sm">
+                              <span className="text-stone-200">{name}</span>
+                              <span className="text-rose-400 font-mono">{count}</span>
+                            </div>
+                          ))}
+                        {entryNoneCount > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-stone-500 italic">No mando a nadie</span>
+                            <span className="text-stone-500 font-mono">{entryNoneCount}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {currentMembers.length > 0 && (
+                      <>
+                        <p className="text-stone-400 text-xs font-mono uppercase mb-1.5">
+                          Salida — {exitVotedCount}/{friends.length} votaron
+                        </p>
+                        {Object.keys(exitVoteCounts).length === 0 && exitNoneCount === 0 ? (
+                          <p className="text-stone-600 text-xs italic">Todavía nadie votó.</p>
+                        ) : (
+                          <div className="space-y-1">
+                            {Object.entries(exitVoteCounts)
+                              .sort((a, b) => b[1] - a[1])
+                              .map(([name, count]) => (
+                                <div key={name} className="flex justify-between text-sm">
+                                  <span className="text-stone-200">{name}</span>
+                                  <span className="text-emerald-400 font-mono">{count}</span>
+                                </div>
+                              ))}
+                            {exitNoneCount > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-stone-500 italic">Que sigan pensando</span>
+                                <span className="text-stone-500 font-mono">{exitNoneCount}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                      </>
+                    )}
+                  </div>
                 )}
 
                 {data.container.history.length > 0 && (
