@@ -2942,14 +2942,14 @@ export default function SubApp() {
             <div className="flex-shrink-0 border-r border-stone-700">
               <table className="text-sm">
                 <thead>
-                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
-                    <th className="text-left px-3 py-2 bg-stone-800 whitespace-nowrap">Fecha</th>
+                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700 h-10">
+                    <th className="text-left px-3 bg-stone-800 whitespace-nowrap">Fecha</th>
                   </tr>
                 </thead>
                 <tbody>
                   {weekDates.map((date) => (
-                    <tr key={date} className="border-b border-stone-700/50 last:border-0">
-                      <td className="px-3 py-2 text-stone-300 font-mono text-xs whitespace-nowrap bg-stone-800">
+                    <tr key={date} className="border-b border-stone-700/50 last:border-0 h-12">
+                      <td className="px-3 text-stone-300 font-mono text-xs whitespace-nowrap bg-stone-800">
                         {editingWeekDate === date ? (
                           <div className="flex items-center gap-1">
                             <input
@@ -3010,9 +3010,9 @@ export default function SubApp() {
             <div className="overflow-x-auto flex-1">
               <table className="w-full text-sm min-w-max">
                 <thead>
-                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
+                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700 h-10">
                     {friends.map((f) => (
-                      <th key={f} className="text-center px-3 py-2 min-w-[64px]">
+                      <th key={f} className="text-center px-3 min-w-[64px]">
                         {f}
                       </th>
                     ))}
@@ -3020,7 +3020,7 @@ export default function SubApp() {
                 </thead>
                 <tbody>
                   {weekDates.map((date) => (
-                    <tr key={date} className="border-b border-stone-700/50 last:border-0">
+                    <tr key={date} className="border-b border-stone-700/50 last:border-0 h-12">
                       {friends.map((f) => {
                         const cell = normalizeCell(data.weeks[date][f]);
                         const hasReason = cell.reason && cell.reason.length > 0;
