@@ -1327,6 +1327,8 @@ export default function SubApp() {
 
   const [reasonModal, setReasonModal] = useState(null);
   const [deleteConfirmDate, setDeleteConfirmDate] = useState(null);
+  const [editingWeekDate, setEditingWeekDate] = useState(null);
+  const [editingWeekDateValue, setEditingWeekDateValue] = useState("");
   const [deleteTriviaConfirm, setDeleteTriviaConfirm] = useState(null);
 
   const [guestName, setGuestName] = useState("");
@@ -1574,6 +1576,69 @@ export default function SubApp() {
     delete nextWeeks[deleteConfirmDate];
     persist({ ...data, weeks: nextWeeks });
     setDeleteConfirmDate(null);
+  };
+
+  const updateWeekDate = (oldDate, newDate) => {
+    if (!isAdmin) return;
+    if (!newDate || newDate === oldDate) return;
+    if (data.weeks[newDate]) {
+      setError(`Ya hay una juntada cargada el ${formatDate(newDate)}.`);
+      return;
+    }
+
+    const nextWeeks = { ...data.weeks };
+    nextWeeks[newDate] = nextWeeks[oldDate];
+    delete nextWeeks[oldDate];
+
+    const nextTrivia = { ...data.trivia };
+    if (nextTrivia[oldDate]) {
+      nextTrivia[newDate] = nextTrivia[oldDate];
+      delete nextTrivia[oldDate];
+    }
+
+    const nextComments = { ...data.comments };
+    if (nextComments[oldDate]) {
+      nextComments[newDate] = nextComments[oldDate];
+      delete nextComments[oldDate];
+    }
+
+    const nextTopics = { ...data.topics };
+    if (nextTopics[oldDate]) {
+      nextTopics[newDate] = nextTopics[oldDate];
+      delete nextTopics[oldDate];
+    }
+
+    const nextVotes = { ...data.container.votes };
+    if (nextVotes[oldDate]) {
+      nextVotes[newDate] = nextVotes[oldDate];
+      delete nextVotes[oldDate];
+    }
+
+    const nextSince = { ...data.container.since };
+    Object.keys(nextSince).forEach((name) => {
+      if (nextSince[name] === oldDate) nextSince[name] = newDate;
+    });
+
+    const nextHistory = data.container.history.map((h) => ({
+      ...h,
+      dateIn: h.dateIn === oldDate ? newDate : h.dateIn,
+      dateOut: h.dateOut === oldDate ? newDate : h.dateOut,
+    }));
+
+    persist({
+      ...data,
+      weeks: nextWeeks,
+      trivia: nextTrivia,
+      comments: nextComments,
+      topics: nextTopics,
+      container: {
+        ...data.container,
+        votes: nextVotes,
+        since: nextSince,
+        history: nextHistory,
+      },
+    });
+    setEditingWeekDate(null);
   };
 
   const addComment = (date) => {
@@ -2198,7 +2263,7 @@ export default function SubApp() {
           <div className="flex items-center gap-2 mb-1">
             <Flame className="text-orange-600" size={24} />
             <h1 className="font-display text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-              SubApp
+              Sub App
             </h1>
           </div>
           <p className="text-stone-400 text-sm mb-6">
@@ -2255,13 +2320,13 @@ export default function SubApp() {
           <div className="flex items-center gap-2 mb-4">
             <Flame className="text-orange-600" size={24} />
             <h1 className="font-display text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-              SubApp
+              Sub App
             </h1>
           </div>
 
           {welcomeChecked && !welcomeDismissed && (
             <div className="bg-stone-900 border border-stone-700 rounded-lg p-4 mb-5">
-              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido a SubApp! 🔥</p>
+              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido a Sub App! 🔥</p>
               <p className="text-stone-400 text-sm mb-2">
                 Acá vamos a ir dejando registrado quién vino y quién faltó a cada juntada semanal, quién fue
                 anfitrión, y todo lo demás que se les cante sumar: temas para charlar, trivia, y lo que venga.
@@ -2380,14 +2445,6 @@ export default function SubApp() {
     })
     .sort((a, b) => b.pct - a.pct || b.present - a.present);
 
-  let record = null;
-  weekDatesAsc.forEach((d) => {
-    const count = friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length;
-    if (!record || count > record.count) {
-      record = { date: d, count };
-    }
-  });
-
   return (
     <div className="min-h-screen bg-stone-900 pb-16">
       <style>{FONT_IMPORT}</style>
@@ -2403,7 +2460,7 @@ export default function SubApp() {
           </button>
           <Flame className="text-orange-600 flex-shrink-0" size={22} />
           <h1 className="font-display text-xl sm:text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-            SubApp
+            Sub App
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -2436,7 +2493,7 @@ export default function SubApp() {
               <div className="flex items-center gap-2">
                 <Flame className="text-orange-600" size={20} />
                 <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
-                  SubApp
+                  Sub App
                 </span>
               </div>
               <button
@@ -2518,7 +2575,7 @@ export default function SubApp() {
           <Lightbulb size={20} className="text-orange-500 flex-shrink-0" />
           <div>
             <div className="font-display font-semibold text-stone-50 text-sm uppercase tracking-wide">
-              ¿De qué vamos a hablar la próxima semana?
+              ¿De qué vamos a hablar la próxima semanal?
             </div>
             <div className="text-stone-500 text-xs">Proponé los temas que quieras que se hablen en la próxima semanal.</div>
           </div>
@@ -2678,16 +2735,6 @@ export default function SubApp() {
             </div>
           )}
           {importMsg && <p className="text-emerald-400 text-xs mt-2">{importMsg}</p>}
-        </div>
-      )}
-
-      {record && record.count > 0 && (
-        <div className="mx-5 mt-6 flex items-center gap-2 bg-stone-800/60 border border-stone-700 rounded-lg px-4 py-2.5 text-sm">
-          <Award size={16} className="text-amber-500 flex-shrink-0" />
-          <span className="text-stone-300">
-            Récord del grupo: <span className="text-stone-50 font-semibold">{record.count}</span> presentes el{" "}
-            <span className="text-stone-50 font-semibold">{formatDate(record.date)}</span>
-          </span>
         </div>
       )}
 
@@ -2894,7 +2941,7 @@ export default function SubApp() {
             <table className="w-full text-sm min-w-max">
               <thead>
                 <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
-                  <th className="text-left px-3 py-2 sticky left-0 bg-stone-800">Fecha</th>
+                  <th className="text-left px-3 py-2 bg-stone-800">Fecha</th>
                   {friends.map((f) => (
                     <th key={f} className="text-center px-3 py-2 min-w-[64px]">
                       {f}
@@ -2905,19 +2952,56 @@ export default function SubApp() {
               <tbody>
                 {weekDates.map((date) => (
                   <tr key={date} className="border-b border-stone-700/50 last:border-0">
-                    <td className="px-3 py-2 text-stone-300 font-mono text-xs whitespace-nowrap sticky left-0 bg-stone-800">
-                      <div className="flex items-center gap-1.5">
-                        <span>{formatDate(date)}</span>
-                        {isAdmin && (
+                    <td className="px-3 py-2 text-stone-300 font-mono text-xs whitespace-nowrap bg-stone-800">
+                      {editingWeekDate === date ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="date"
+                            value={editingWeekDateValue}
+                            onChange={(e) => setEditingWeekDateValue(e.target.value)}
+                            className="bg-stone-900 border border-stone-700 rounded px-1.5 py-1 text-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-orange-600"
+                          />
                           <button
-                            onClick={() => deleteWeek(date)}
-                            className="text-stone-600 hover:text-rose-500"
-                            aria-label={`Borrar ${formatDate(date)}`}
+                            onClick={() => updateWeekDate(date, editingWeekDateValue)}
+                            className="text-emerald-500 hover:text-emerald-400"
+                            aria-label="Guardar fecha"
                           >
-                            <Trash2 size={12} />
+                            <Check size={13} />
                           </button>
-                        )}
-                      </div>
+                          <button
+                            onClick={() => setEditingWeekDate(null)}
+                            className="text-stone-500 hover:text-stone-300"
+                            aria-label="Cancelar"
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          <span>{formatDate(date)}</span>
+                          {isAdmin && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setEditingWeekDate(date);
+                                  setEditingWeekDateValue(date);
+                                }}
+                                className="text-stone-600 hover:text-orange-500"
+                                aria-label={`Editar fecha ${formatDate(date)}`}
+                              >
+                                <Pencil size={12} />
+                              </button>
+                              <button
+                                onClick={() => deleteWeek(date)}
+                                className="text-stone-600 hover:text-rose-500"
+                                aria-label={`Borrar ${formatDate(date)}`}
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </td>
                     {friends.map((f) => {
                       const cell = normalizeCell(data.weeks[date][f]);
@@ -3588,7 +3672,9 @@ export default function SubApp() {
                         El Container no es un castigo — es un ratito aparte para repensar cómo viene cada uno.
                         Votá en anónimo. El Container es un castigo temporal, podés votar a quien vos te parezca
                         que tiene que tomarse un momento de reflexión para pensar cómo viene. Si estás adentro del
-                        Container, no lo tomes personal, son tus amigos queriendo lo mejor para vos.
+                        Container, no lo tomes personal, son tus amigos queriendo lo mejor para vos. Quien junte{" "}
+                        <span className="text-stone-300 font-semibold">2 votos o más</span> queda como candidato —
+                        recién entra si el admin lo aprueba.
                       </p>
 
                       {!canVote ? (
@@ -4064,6 +4150,14 @@ export default function SubApp() {
               const evolutionPoints = weekDatesAsc.map((d) => friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length);
               const evolutionLabels = weekDatesAsc.map((d) => formatDateShort(d));
 
+              let maxRecord = null;
+              let minRecord = null;
+              weekDatesAsc.forEach((d) => {
+                const count = friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length;
+                if (!maxRecord || count > maxRecord.count) maxRecord = { date: d, count };
+                if (!minRecord || count < minRecord.count) minRecord = { date: d, count };
+              });
+
               // ---- FIN DE SEMANA ----
               const weekendDates = Object.keys(data.weekends).sort((a, b) => (a < b ? 1 : -1));
               const totalWeekends = weekendDates.length;
@@ -4126,6 +4220,29 @@ export default function SubApp() {
                     <h3 className="font-display text-sm font-semibold text-orange-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                       <Flame size={14} /> General — Jueves
                     </h3>
+
+                    {(maxRecord || minRecord) && (
+                      <div className="grid grid-cols-2 gap-3 mb-5">
+                        {maxRecord && (
+                          <div className="bg-stone-800 border border-stone-700 rounded-lg px-3 py-2.5">
+                            <p className="text-amber-500 text-[10px] font-mono uppercase tracking-wide mb-0.5">
+                              Récord del grupo
+                            </p>
+                            <p className="text-stone-50 text-sm font-semibold">{maxRecord.count} presentes</p>
+                            <p className="text-stone-500 text-xs">{formatDate(maxRecord.date)}</p>
+                          </div>
+                        )}
+                        {minRecord && (
+                          <div className="bg-stone-800 border border-stone-700 rounded-lg px-3 py-2.5">
+                            <p className="text-rose-400 text-[10px] font-mono uppercase tracking-wide mb-0.5">
+                              Menos gente
+                            </p>
+                            <p className="text-stone-50 text-sm font-semibold">{minRecord.count} presentes</p>
+                            <p className="text-stone-500 text-xs">{formatDate(minRecord.date)}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <p className="text-stone-500 text-xs font-mono uppercase mb-2">Podio de asistencia</p>
                     <Podium items={attendancePodium} unit="%" />
