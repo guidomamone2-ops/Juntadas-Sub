@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — entra cualquiera que junte 2 votos o más, sin importar cuántos sean. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — quien junte 2 votos o más queda como candidato pendiente, pero recién entra si el admin lo aprueba. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
@@ -1078,8 +1078,9 @@ function normalizeData(d) {
             since: d.container.since && typeof d.container.since === "object" ? d.container.since : {},
             history: Array.isArray(d.container.history) ? d.container.history : [],
             votes: d.container.votes && typeof d.container.votes === "object" ? d.container.votes : {},
+            pendingEntrants: Array.isArray(d.container.pendingEntrants) ? d.container.pendingEntrants : [],
           }
-        : { members: [], since: {}, history: [], votes: {} },
+        : { members: [], since: {}, history: [], votes: {}, pendingEntrants: [] },
   };
 }
 
@@ -1213,17 +1214,34 @@ function tallyContainer(juntadaDate, baseData) {
     exit: {},
   };
   const currentMembers = baseData.container.members;
+  const currentPending = baseData.container.pendingEntrants || [];
 
-  // ENTRADA: entra cualquiera que junte 2 votos o mas (sin importar cuantos sean).
-  // Cada votante puede marcar mas de un nombre; cada marca suma un voto para ese nombre.
+  // ENTRADA: quien junte 2 votos o mas queda como CANDIDATO PENDIENTE — no entra
+  // directo, el admin tiene que aprobarlo a mano.
   const entryCounts = {};
   Object.values(votes.entry || {}).forEach((candidates) => {
     (candidates || []).forEach((candidate) => {
       entryCounts[candidate] = (entryCounts[candidate] || 0) + 1;
     });
   });
-  let entrants = Object.keys(entryCounts).filter((n) => entryCounts[n] >= 2);
-  entrants = entrants.filter((n) => !currentMembers.includes(n));
+  let newCandidates = Object.keys(entryCounts).filter((n) => entryCounts[n] >= 2);
+  newCandidates = newCandidates.filter((n) => !currentMembers.includes(n));
+
+  // Combina con pendientes previos que todavia no fueron aprobados/rechazados
+  // (por si hubo mas de una ronda sin que el admin revisara), sumando los votos.
+  const nextPendingMap = {};
+  currentPending.forEach((p) => {
+    nextPendingMap[p.name] = { name: p.name, votes: p.votes, juntadaDate: p.juntadaDate };
+  });
+  newCandidates.forEach((n) => {
+    const existing = nextPendingMap[n];
+    nextPendingMap[n] = {
+      name: n,
+      votes: entryCounts[n] + (existing ? existing.votes : 0),
+      juntadaDate,
+    };
+  });
+  const nextPendingEntrants = Object.values(nextPendingMap);
 
   // SALIDA: el/los mas votados para salir, siempre que superen a los votos de "que sigan"
   // (un votante que no marca a nadie esta votando implicitamente "que sigan").
@@ -1244,11 +1262,8 @@ function tallyContainer(juntadaDate, baseData) {
     releasedNames = Object.keys(exitCounts).filter((n) => exitCounts[n] === maxExitVotes);
   }
 
-  const nextMembers = [...currentMembers.filter((n) => !releasedNames.includes(n)), ...entrants];
+  const nextMembers = currentMembers.filter((n) => !releasedNames.includes(n));
   const nextSince = { ...baseData.container.since };
-  entrants.forEach((n) => {
-    nextSince[n] = juntadaDate;
-  });
   releasedNames.forEach((n) => {
     delete nextSince[n];
   });
@@ -1267,6 +1282,7 @@ function tallyContainer(juntadaDate, baseData) {
     members: nextMembers,
     since: nextSince,
     history: nextHistory,
+    pendingEntrants: nextPendingEntrants,
   };
 }
 
@@ -1512,7 +1528,7 @@ export default function JuntadasSub() {
       trivia: {},
       calendar: {},
       contactMessages: [],
-      container: { members: [], since: {}, history: [], votes: {} },
+      container: { members: [], since: {}, history: [], votes: {}, pendingEntrants: [] },
     });
   };
 
@@ -1745,6 +1761,33 @@ export default function JuntadasSub() {
         members: nextMembers,
         since: nextSince,
         history: [...data.container.history, { name, dateIn, dateOut: todayISO() }],
+      },
+    });
+  };
+
+  const approveEntrant = (name) => {
+    if (!isAdmin) return;
+    const candidate = data.container.pendingEntrants.find((p) => p.name === name);
+    if (!candidate) return;
+    const entryDate = candidate.juntadaDate || todayISO();
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        members: [...data.container.members, name],
+        since: { ...data.container.since, [name]: entryDate },
+        pendingEntrants: data.container.pendingEntrants.filter((p) => p.name !== name),
+      },
+    });
+  };
+
+  const rejectEntrant = (name) => {
+    if (!isAdmin) return;
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        pendingEntrants: data.container.pendingEntrants.filter((p) => p.name !== name),
       },
     });
   };
@@ -2327,8 +2370,6 @@ export default function JuntadasSub() {
     })
     .sort((a, b) => b.pct - a.pct || b.present - a.present);
 
-  const friendsByAttendance = stats.map((s) => s.name);
-
   let record = null;
   weekDatesAsc.forEach((d) => {
     const count = friends.filter((f) => normalizeCell(data.weeks[d][f]).attended).length;
@@ -2444,15 +2485,6 @@ export default function JuntadasSub() {
         </button>
       </div>
 
-      {data.container.members.length > 0 && (
-        <div className="mx-5 mt-3 flex items-center gap-2 bg-rose-950/30 border border-rose-900 rounded-lg px-4 py-2.5 text-sm">
-          <Package size={16} className="text-rose-400 flex-shrink-0" />
-          <span className="text-stone-300">
-            <span className="text-rose-300 font-semibold">En el Container:</span>{" "}
-            <span className="text-stone-100">{data.container.members.join(", ")}</span>
-          </span>
-        </div>
-      )}
 
       {activeTab === "planilla" && (
         <>
@@ -2785,7 +2817,7 @@ export default function JuntadasSub() {
               <thead>
                 <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
                   <th className="text-left px-3 py-2 sticky left-0 bg-stone-800">Fecha</th>
-                  {friendsByAttendance.map((f) => (
+                  {friends.map((f) => (
                     <th key={f} className="text-center px-3 py-2 min-w-[64px]">
                       {f}
                     </th>
@@ -2809,7 +2841,7 @@ export default function JuntadasSub() {
                         )}
                       </div>
                     </td>
-                    {friendsByAttendance.map((f) => {
+                    {friends.map((f) => {
                       const cell = normalizeCell(data.weeks[date][f]);
                       const hasReason = cell.reason && cell.reason.length > 0;
                       let bg = "bg-stone-700 text-stone-400";
@@ -3407,6 +3439,41 @@ export default function JuntadasSub() {
 
             return (
               <>
+                {data.container.pendingEntrants.length > 0 && (
+                  <div className="bg-stone-800 border border-amber-700/50 rounded-lg p-4 mb-5">
+                    <p className="text-amber-400 text-sm font-semibold mb-2">
+                      Candidatos pendientes de aprobación:
+                    </p>
+                    <div className="space-y-2">
+                      {data.container.pendingEntrants.map((p) => (
+                        <div key={p.name} className="flex items-center justify-between text-sm">
+                          <span className="text-stone-100">
+                            {p.name} <span className="text-stone-500 text-xs font-mono">({p.votes} votos)</span>
+                          </span>
+                          {isAdmin ? (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => approveEntrant(p.name)}
+                                className="text-xs text-emerald-500 hover:text-emerald-400 font-mono uppercase"
+                              >
+                                Aprobar
+                              </button>
+                              <button
+                                onClick={() => rejectEntrant(p.name)}
+                                className="text-xs text-rose-500 hover:text-rose-400 font-mono uppercase"
+                              >
+                                Rechazar
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-stone-500 text-xs italic">Esperando al admin</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {currentMembers.length > 0 && (
                   <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-5">
                     <p className="text-stone-300 text-sm mb-2">
@@ -3414,16 +3481,9 @@ export default function JuntadasSub() {
                     </p>
                     <div className="space-y-1.5">
                       {currentMembers.map((name) => {
-                        const since = data.container.since[name];
-                        const duration = since ? weekDates.filter((d) => d >= since).length : 0;
                         return (
                           <div key={name} className="flex items-center justify-between text-sm">
-                            <span className="text-stone-100">
-                              {name}{" "}
-                              <span className="text-stone-500 text-xs font-mono">
-                                — {duration} juntada{duration === 1 ? "" : "s"} de reflexión
-                              </span>
-                            </span>
+                            <span className="text-stone-100">{name}</span>
                             {isAdmin && (
                               <button
                                 onClick={() => releaseFromContainer(name)}
