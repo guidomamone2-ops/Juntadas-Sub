@@ -64,6 +64,10 @@ const FAQ_ITEMS = [
     a: 'Es donde se proponen los temas de charla para la próxima semanal — una lista colaborativa, sin votación. Cada uno puede proponer hasta 2 temas, no es obligatorio. Se ve quién propuso cada uno, y cada uno puede editar o borrar solo lo suyo. Cuando el admin carga la juntada siguiente, esa ronda queda archivada (de solo lectura) y arranca una nueva para la próxima.',
   },
   {
+    q: "¿Para qué sirve el Foro?",
+    a: "Es un hilo de comentarios por cada juntada, para tirar anécdotas, chistes o lo que sea. Cualquiera con sesión iniciada puede escribir, bajo su propio nombre. Es vía libre: están permitidos los insultos y las faltas de respeto — ni el admin puede borrar comentarios. Única excepción: si estás en el Container, no podés comentar en el foro mientras estés ahí adentro.",
+  },
+  {
     q: "¿Cómo funciona la Trivia?",
     a: 'Sale una pregunta de un banco fijo cada vez que el admin agrega una juntada — una por juntada, la misma para todos. Tenés que iniciar sesión para jugar. Al entrar ves un botón "Comenzar" — recién ahí aparece la pregunta y tenés 10 segundos para elegir una opción, así no da tiempo a buscarla. Acertar suma un punto al ranking de Trivia.',
   },
@@ -73,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — entran los 2 más votados (o más si hay empate). También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — entra cualquiera que junte 2 votos o más, sin importar cuántos sean. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
@@ -1210,7 +1214,7 @@ function tallyContainer(juntadaDate, baseData) {
   };
   const currentMembers = baseData.container.members;
 
-  // ENTRADA: 2 mas votados, o mas si hay empate en el 2do puesto
+  // ENTRADA: entra cualquiera que junte 2 votos o mas (sin importar cuantos sean).
   // Cada votante puede marcar mas de un nombre; cada marca suma un voto para ese nombre.
   const entryCounts = {};
   Object.values(votes.entry || {}).forEach((candidates) => {
@@ -1218,13 +1222,7 @@ function tallyContainer(juntadaDate, baseData) {
       entryCounts[candidate] = (entryCounts[candidate] || 0) + 1;
     });
   });
-  const uniqueEntryCounts = [...new Set(Object.values(entryCounts))].sort((a, b) => b - a);
-  let entrants = [];
-  for (const cnt of uniqueEntryCounts) {
-    const namesAtCount = Object.keys(entryCounts).filter((n) => entryCounts[n] === cnt);
-    entrants.push(...namesAtCount);
-    if (entrants.length >= 2) break;
-  }
+  let entrants = Object.keys(entryCounts).filter((n) => entryCounts[n] >= 2);
   entrants = entrants.filter((n) => !currentMembers.includes(n));
 
   // SALIDA: el/los mas votados para salir, siempre que superen a los votos de "que sigan"
@@ -1562,6 +1560,7 @@ export default function JuntadasSub() {
   const addComment = (date) => {
     const text = (commentDrafts[date] || "").trim();
     if (!text || !myName) return;
+    if (data.container.members.includes(myName)) return; // en el Container no puede comentar
     const entry = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       author: myName,
@@ -1690,7 +1689,7 @@ export default function JuntadasSub() {
   };
 
   const castEntryVote = (candidatesArray) => {
-    if (!myName || !data.friends.includes(myName)) return;
+    if (!myName || (!data.friends.includes(myName) && !data.guests.includes(myName))) return;
     const latest = getLatestDate(data.weeks);
     if (!latest) return;
     const roundVotes = data.container.votes[latest] || { entry: {}, exit: {} };
@@ -1712,7 +1711,7 @@ export default function JuntadasSub() {
   };
 
   const castExitVote = (namesArray) => {
-    if (!myName || !data.friends.includes(myName)) return;
+    if (!myName || (!data.friends.includes(myName) && !data.guests.includes(myName))) return;
     const latest = getLatestDate(data.weeks);
     if (!latest) return;
     const roundVotes = data.container.votes[latest] || { entry: {}, exit: {} };
@@ -2401,6 +2400,7 @@ export default function JuntadasSub() {
               {[
                 { key: "planilla", label: "Panel General", icon: <Flame size={16} /> },
                 { key: "temas", label: "Temas", icon: <Lightbulb size={16} /> },
+                { key: "foro", label: "Foro", icon: <MessagesSquare size={16} /> },
                 { key: "findes", label: "Fin de Semana", icon: <Sun size={16} /> },
                 { key: "estadisticas", label: "Estadísticas", icon: <BarChart3 size={16} /> },
                 { key: "trivia", label: "Trivia", icon: <span className="text-base leading-none">⚽</span> },
@@ -3372,7 +3372,7 @@ export default function JuntadasSub() {
             const latest = getLatestDate(data.weeks);
             const currentMembers = data.container.members;
             const roundVotes = latest ? data.container.votes[latest] || { entry: {}, exit: {} } : { entry: {}, exit: {} };
-            const canVote = myName && data.friends.includes(myName);
+            const canVote = myName && (data.friends.includes(myName) || data.guests.includes(myName));
             const myEntryVote = roundVotes.entry ? roundVotes.entry[myName] : undefined;
             const myExitVote = roundVotes.exit ? roundVotes.exit[myName] : undefined;
             const entryCandidates = friends.filter((f) => !currentMembers.includes(f));
@@ -3458,7 +3458,7 @@ export default function JuntadasSub() {
                       </p>
 
                       {!canVote ? (
-                        <p className="text-stone-500 text-xs italic">Solo los titulares pueden votar.</p>
+                        <p className="text-stone-500 text-xs italic">Iniciá sesión arriba para poder votar.</p>
                       ) : myEntryVote !== undefined ? (
                         <p className="text-emerald-400 text-sm">Ya votaste esta ronda. Gracias por participar.</p>
                       ) : (
@@ -3505,7 +3505,7 @@ export default function JuntadasSub() {
                         </p>
 
                         {!canVote ? (
-                          <p className="text-stone-500 text-xs italic">Solo los titulares pueden votar.</p>
+                          <p className="text-stone-500 text-xs italic">Iniciá sesión arriba para poder votar.</p>
                         ) : myExitVote !== undefined ? (
                           <p className="text-emerald-400 text-sm">Ya votaste esta ronda. Gracias por participar.</p>
                         ) : (
@@ -4212,6 +4212,89 @@ export default function JuntadasSub() {
                     </div>
                   ))}
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "foro" && (
+        <div className="px-5 mt-6">
+          <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            Foro
+          </h2>
+          <p className="text-stone-500 text-xs mb-4">
+            Un hilo de comentarios por cada juntada. Es vía libre: están permitidos los insultos y las faltas de
+            respeto, cada uno pone lo que quiere bajo su propio nombre. Ni el admin puede borrar comentarios.
+          </p>
+
+          {weekDates.length === 0 ? (
+            <div className="bg-stone-800 border border-dashed border-stone-700 rounded-lg p-8 text-center text-stone-500 text-sm">
+              Todavía no hay juntadas cargadas.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {weekDates.map((date) => {
+                const weekComments = data.comments[date] || [];
+                const presentCount = friends.filter((f) => normalizeCell(data.weeks[date][f]).attended).length;
+                const hostName = friends.find((f) => normalizeCell(data.weeks[date][f]).host);
+                const inContainer = myName && data.container.members.includes(myName);
+                return (
+                  <div key={date} className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+                    <div className="px-4 py-3 border-b border-stone-700 flex items-center justify-between flex-wrap gap-1">
+                      <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
+                        {formatDate(date)}
+                      </span>
+                      <span className="text-stone-400 text-xs font-mono">
+                        {presentCount} presentes{hostName ? ` · anfitrión: ${hostName}` : ""}
+                      </span>
+                    </div>
+
+                    <div className="px-4 py-3 space-y-3 max-h-64 overflow-y-auto">
+                      {weekComments.length === 0 ? (
+                        <p className="text-stone-500 text-xs italic">Todavía nadie comentó esta juntada.</p>
+                      ) : (
+                        weekComments.map((c) => (
+                          <div key={c.id}>
+                            <div className="flex items-baseline gap-2">
+                              <span className="text-stone-50 text-sm font-medium">{c.author}</span>
+                              <span className="text-stone-500 text-xs font-mono">{formatDateTime(c.ts)}</span>
+                            </div>
+                            <p className="text-stone-300 text-sm whitespace-pre-wrap">{c.text}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    <div className="px-4 py-3 border-t border-stone-700">
+                      {inContainer ? (
+                        <p className="text-rose-400 text-xs italic">
+                          Estás en el Container — no podés comentar en el foro mientras estés ahí.
+                        </p>
+                      ) : (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={commentDrafts[date] || ""}
+                            onChange={(e) => setCommentDrafts({ ...commentDrafts, [date]: e.target.value })}
+                            onKeyDown={(e) => e.key === "Enter" && addComment(date)}
+                            placeholder={myName ? "Escribí algo sobre esta juntada..." : "Iniciá sesión arriba para comentar"}
+                            disabled={!myName}
+                            className="flex-1 bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600 disabled:opacity-50"
+                          />
+                          <button
+                            onClick={() => addComment(date)}
+                            disabled={!myName || !(commentDrafts[date] || "").trim()}
+                            className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-3 rounded flex items-center justify-center"
+                            aria-label="Enviar comentario"
+                          >
+                            <Send size={15} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
