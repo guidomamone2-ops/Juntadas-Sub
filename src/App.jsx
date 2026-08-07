@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene performando. También se vota si alguien ya se ganó salir.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — quien junte 2 votos o más queda como candidato pendiente, pero recién entra si el admin lo aprueba. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
@@ -2937,123 +2937,142 @@ export default function SubApp() {
             {isAdmin ? ' Tocá "+ Juntada" para arrancar.' : ""}
           </div>
         ) : (
-          <div className="bg-stone-800 border border-stone-700 rounded-lg overflow-x-auto">
-            <table className="w-full text-sm min-w-max">
-              <thead>
-                <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
-                  <th className="text-left px-3 py-2 bg-stone-800">Fecha</th>
-                  {friends.map((f) => (
-                    <th key={f} className="text-center px-3 py-2 min-w-[64px]">
-                      {f}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {weekDates.map((date) => (
-                  <tr key={date} className="border-b border-stone-700/50 last:border-0">
-                    <td className="px-3 py-2 text-stone-300 font-mono text-xs whitespace-nowrap bg-stone-800">
-                      {editingWeekDate === date ? (
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="date"
-                            value={editingWeekDateValue}
-                            onChange={(e) => setEditingWeekDateValue(e.target.value)}
-                            className="bg-stone-900 border border-stone-700 rounded px-1.5 py-1 text-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-orange-600"
-                          />
-                          <button
-                            onClick={() => updateWeekDate(date, editingWeekDateValue)}
-                            className="text-emerald-500 hover:text-emerald-400"
-                            aria-label="Guardar fecha"
-                          >
-                            <Check size={13} />
-                          </button>
-                          <button
-                            onClick={() => setEditingWeekDate(null)}
-                            className="text-stone-500 hover:text-stone-300"
-                            aria-label="Cancelar"
-                          >
-                            <X size={13} />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5">
-                          <span>{formatDate(date)}</span>
-                          {isAdmin && (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setEditingWeekDate(date);
-                                  setEditingWeekDateValue(date);
-                                }}
-                                className="text-stone-600 hover:text-orange-500"
-                                aria-label={`Editar fecha ${formatDate(date)}`}
-                              >
-                                <Pencil size={12} />
-                              </button>
-                              <button
-                                onClick={() => deleteWeek(date)}
-                                className="text-stone-600 hover:text-rose-500"
-                                aria-label={`Borrar ${formatDate(date)}`}
-                              >
-                                <Trash2 size={12} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                    {friends.map((f) => {
-                      const cell = normalizeCell(data.weeks[date][f]);
-                      const hasReason = cell.reason && cell.reason.length > 0;
-                      let bg = "bg-stone-700 text-stone-400";
-                      let Icon = X;
-                      if (cell.host) {
-                        bg = "bg-amber-500 text-stone-950";
-                        Icon = Crown;
-                      } else if (cell.attended) {
-                        bg = "bg-orange-600/90 text-stone-950";
-                        Icon = Check;
-                      } else if (cell.notified) {
-                        bg = "bg-sky-600/80 text-stone-50";
-                        Icon = MessageCircle;
-                      } else {
-                        bg = "bg-rose-700/70 text-stone-50";
-                        Icon = X;
-                      }
-                      const isMine = !isAdmin && myName && myName === f;
-                      return (
-                        <td key={f} className="px-3 py-2 text-center">
-                          <div className="relative inline-block">
+          <div className="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden flex">
+            {/* Columna de fecha FIJA, no se mueve nunca */}
+            <div className="flex-shrink-0 border-r border-stone-700">
+              <table className="text-sm">
+                <thead>
+                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
+                    <th className="text-left px-3 py-2 bg-stone-800 whitespace-nowrap">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {weekDates.map((date) => (
+                    <tr key={date} className="border-b border-stone-700/50 last:border-0">
+                      <td className="px-3 py-2 text-stone-300 font-mono text-xs whitespace-nowrap bg-stone-800">
+                        {editingWeekDate === date ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="date"
+                              value={editingWeekDateValue}
+                              onChange={(e) => setEditingWeekDateValue(e.target.value)}
+                              className="bg-stone-900 border border-stone-700 rounded px-1.5 py-1 text-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-orange-600"
+                            />
                             <button
-                              onClick={() => (isAdmin ? toggleCell(date, f) : openCell(date, f))}
-                              className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${bg} hover:opacity-80 cursor-pointer`}
-                              aria-label={`${f} - ${formatDate(date)}`}
+                              onClick={() => updateWeekDate(date, editingWeekDateValue)}
+                              className="text-emerald-500 hover:text-emerald-400"
+                              aria-label="Guardar fecha"
                             >
-                              <Icon size={14} />
+                              <Check size={13} />
                             </button>
-                            {(isAdmin || isMine) && (
-                              <button
-                                onClick={() => openCell(date, f)}
-                                className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center ${
-                                  hasReason ? "bg-stone-200 text-stone-900" : "bg-stone-900 text-stone-500"
-                                } border border-stone-800`}
-                                aria-label="Motivo"
-                              >
-                                <Pencil size={8} />
-                              </button>
-                            )}
-                            {!isAdmin && !isMine && hasReason && (
-                              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-stone-200 border border-stone-800" />
+                            <button
+                              onClick={() => setEditingWeekDate(null)}
+                              className="text-stone-500 hover:text-stone-300"
+                              aria-label="Cancelar"
+                            >
+                              <X size={13} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <span>{formatDate(date)}</span>
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setEditingWeekDate(date);
+                                    setEditingWeekDateValue(date);
+                                  }}
+                                  className="text-stone-600 hover:text-orange-500"
+                                  aria-label={`Editar fecha ${formatDate(date)}`}
+                                >
+                                  <Pencil size={12} />
+                                </button>
+                                <button
+                                  onClick={() => deleteWeek(date)}
+                                  className="text-stone-600 hover:text-rose-500"
+                                  aria-label={`Borrar ${formatDate(date)}`}
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </>
                             )}
                           </div>
-                        </td>
-                      );
-                    })}
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Columnas de cada amigo, esto es lo unico que scrollea horizontal */}
+            <div className="overflow-x-auto flex-1">
+              <table className="w-full text-sm min-w-max">
+                <thead>
+                  <tr className="text-stone-400 text-xs font-mono uppercase border-b border-stone-700">
+                    {friends.map((f) => (
+                      <th key={f} className="text-center px-3 py-2 min-w-[64px]">
+                        {f}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {weekDates.map((date) => (
+                    <tr key={date} className="border-b border-stone-700/50 last:border-0">
+                      {friends.map((f) => {
+                        const cell = normalizeCell(data.weeks[date][f]);
+                        const hasReason = cell.reason && cell.reason.length > 0;
+                        let bg = "bg-stone-700 text-stone-400";
+                        let Icon = X;
+                        if (cell.host) {
+                          bg = "bg-amber-500 text-stone-950";
+                          Icon = Crown;
+                        } else if (cell.attended) {
+                          bg = "bg-orange-600/90 text-stone-950";
+                          Icon = Check;
+                        } else if (cell.notified) {
+                          bg = "bg-sky-600/80 text-stone-50";
+                          Icon = MessageCircle;
+                        } else {
+                          bg = "bg-rose-700/70 text-stone-50";
+                          Icon = X;
+                        }
+                        const isMine = !isAdmin && myName && myName === f;
+                        return (
+                          <td key={f} className="px-3 py-2 text-center">
+                            <div className="relative inline-block">
+                              <button
+                                onClick={() => (isAdmin ? toggleCell(date, f) : openCell(date, f))}
+                                className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${bg} hover:opacity-80 cursor-pointer`}
+                                aria-label={`${f} - ${formatDate(date)}`}
+                              >
+                                <Icon size={14} />
+                              </button>
+                              {(isAdmin || isMine) && (
+                                <button
+                                  onClick={() => openCell(date, f)}
+                                  className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center ${
+                                    hasReason ? "bg-stone-200 text-stone-900" : "bg-stone-900 text-stone-500"
+                                  } border border-stone-800`}
+                                  aria-label="Motivo"
+                                >
+                                  <Pencil size={8} />
+                                </button>
+                              )}
+                              {!isAdmin && !isMine && hasReason && (
+                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-stone-200 border border-stone-800" />
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
