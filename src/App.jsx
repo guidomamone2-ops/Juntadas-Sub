@@ -1303,7 +1303,7 @@ function formatDateTime(ts) {
     d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
 }
 
-export default function JuntadasSub() {
+export default function SubApp() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -1321,6 +1321,9 @@ export default function JuntadasSub() {
   const [newFriendName, setNewFriendName] = useState("");
   const [renameTarget, setRenameTarget] = useState("");
   const [renameValue, setRenameValue] = useState("");
+  const [pwResetTarget, setPwResetTarget] = useState("");
+  const [pwResetValue, setPwResetValue] = useState("");
+  const [pwResetMsg, setPwResetMsg] = useState("");
 
   const [reasonModal, setReasonModal] = useState(null);
   const [deleteConfirmDate, setDeleteConfirmDate] = useState(null);
@@ -2061,6 +2064,13 @@ export default function JuntadasSub() {
     setEditingQuote(false);
   };
 
+  const resetFriendPassword = (name, newPassword) => {
+    if (!isAdmin) return;
+    const clean = (newPassword || "").trim();
+    if (!name || clean.length < 3) return;
+    persist({ ...data, friendAuth: { ...data.friendAuth, [name]: clean } });
+  };
+
   const addContactMessage = (type, text) => {
     const clean = (text || "").trim();
     if (!clean || !myName) return;
@@ -2188,7 +2198,7 @@ export default function JuntadasSub() {
           <div className="flex items-center gap-2 mb-1">
             <Flame className="text-orange-600" size={24} />
             <h1 className="font-display text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-              Juntadas Sub
+              SubApp
             </h1>
           </div>
           <p className="text-stone-400 text-sm mb-6">
@@ -2245,13 +2255,13 @@ export default function JuntadasSub() {
           <div className="flex items-center gap-2 mb-4">
             <Flame className="text-orange-600" size={24} />
             <h1 className="font-display text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-              Juntadas Sub
+              SubApp
             </h1>
           </div>
 
           {welcomeChecked && !welcomeDismissed && (
             <div className="bg-stone-900 border border-stone-700 rounded-lg p-4 mb-5">
-              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido a Juntadas Sub! 🔥</p>
+              <p className="text-stone-50 text-sm font-medium mb-2">¡Bienvenido a SubApp! 🔥</p>
               <p className="text-stone-400 text-sm mb-2">
                 Acá vamos a ir dejando registrado quién vino y quién faltó a cada juntada semanal, quién fue
                 anfitrión, y todo lo demás que se les cante sumar: temas para charlar, trivia, y lo que venga.
@@ -2393,7 +2403,7 @@ export default function JuntadasSub() {
           </button>
           <Flame className="text-orange-600 flex-shrink-0" size={22} />
           <h1 className="font-display text-xl sm:text-2xl font-semibold text-stone-50 tracking-wide uppercase">
-            Juntadas Sub
+            SubApp
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -2426,7 +2436,7 @@ export default function JuntadasSub() {
               <div className="flex items-center gap-2">
                 <Flame className="text-orange-600" size={20} />
                 <span className="font-display font-semibold text-stone-50 uppercase tracking-wide text-sm">
-                  Juntadas Sub
+                  SubApp
                 </span>
               </div>
               <button
@@ -2485,6 +2495,15 @@ export default function JuntadasSub() {
         </button>
       </div>
 
+      {data.container.members.length > 0 && (
+        <div className="mx-5 mt-3 bg-amber-600 rounded-lg px-4 py-2.5 text-sm flex items-center gap-2">
+          <Package size={16} className="text-stone-950 flex-shrink-0" />
+          <span className="text-stone-950">
+            <span className="font-bold uppercase tracking-wide">En el Container:</span>{" "}
+            <span className="font-semibold">{data.container.members.join(", ")}</span>
+          </span>
+        </div>
+      )}
 
       {activeTab === "planilla" && (
         <>
@@ -2580,6 +2599,65 @@ export default function JuntadasSub() {
               Cambia el nombre en el plantel, en toda la planilla histórica, los temas, los findes, el Container y
               la trivia.
             </p>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-stone-700">
+            <div className="text-stone-300 text-xs font-mono uppercase tracking-wider mb-2">
+              Cambiar contraseña de alguien
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={pwResetTarget}
+                onChange={(e) => {
+                  setPwResetTarget(e.target.value);
+                  setPwResetMsg("");
+                }}
+                className="bg-stone-900 border border-stone-700 rounded px-2 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+              >
+                <option value="">Elegí a quién...</option>
+                <optgroup label="Locales">
+                  {data.friends.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </optgroup>
+                {data.guests.length > 0 && (
+                  <optgroup label="Del exterior">
+                    {data.guests.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+              </select>
+              <input
+                type="text"
+                value={pwResetValue}
+                onChange={(e) => setPwResetValue(e.target.value)}
+                placeholder="Contraseña nueva"
+                className="flex-1 min-w-[120px] bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+              />
+              <button
+                onClick={() => {
+                  if (pwResetTarget && pwResetValue.trim().length >= 3) {
+                    resetFriendPassword(pwResetTarget, pwResetValue.trim());
+                    setPwResetMsg(`Contraseña de ${pwResetTarget} actualizada.`);
+                    setPwResetTarget("");
+                    setPwResetValue("");
+                  }
+                }}
+                disabled={!pwResetTarget || pwResetValue.trim().length < 3}
+                className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 rounded font-display font-semibold uppercase text-sm"
+              >
+                Cambiar
+              </button>
+            </div>
+            <p className="text-stone-500 text-xs mt-2">
+              Para cuando alguien se olvida la suya — le asignás una nueva y se la pasás vos. Mínimo 3 caracteres.
+            </p>
+            {pwResetMsg && <p className="text-emerald-400 text-xs mt-1">{pwResetMsg}</p>}
           </div>
 
           {missingHistoricalWeeks.length > 0 && (
@@ -3439,10 +3517,10 @@ export default function JuntadasSub() {
 
             return (
               <>
-                {data.container.pendingEntrants.length > 0 && (
+                {isAdmin && data.container.pendingEntrants.length > 0 && (
                   <div className="bg-stone-800 border border-amber-700/50 rounded-lg p-4 mb-5">
                     <p className="text-amber-400 text-sm font-semibold mb-2">
-                      Candidatos pendientes de aprobación:
+                      Candidatos pendientes de aprobación (solo admin):
                     </p>
                     <div className="space-y-2">
                       {data.container.pendingEntrants.map((p) => (
@@ -3450,24 +3528,20 @@ export default function JuntadasSub() {
                           <span className="text-stone-100">
                             {p.name} <span className="text-stone-500 text-xs font-mono">({p.votes} votos)</span>
                           </span>
-                          {isAdmin ? (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => approveEntrant(p.name)}
-                                className="text-xs text-emerald-500 hover:text-emerald-400 font-mono uppercase"
-                              >
-                                Aprobar
-                              </button>
-                              <button
-                                onClick={() => rejectEntrant(p.name)}
-                                className="text-xs text-rose-500 hover:text-rose-400 font-mono uppercase"
-                              >
-                                Rechazar
-                              </button>
-                            </div>
-                          ) : (
-                            <span className="text-stone-500 text-xs italic">Esperando al admin</span>
-                          )}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => approveEntrant(p.name)}
+                              className="text-xs text-emerald-500 hover:text-emerald-400 font-mono uppercase"
+                            >
+                              Aprobar
+                            </button>
+                            <button
+                              onClick={() => rejectEntrant(p.name)}
+                              className="text-xs text-rose-500 hover:text-rose-400 font-mono uppercase"
+                            >
+                              Rechazar
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
