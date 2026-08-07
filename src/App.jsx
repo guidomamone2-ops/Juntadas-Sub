@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando — quien junte 2 votos o más queda como candidato pendiente, pero recién entra si el admin lo aprueba. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene performando. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
