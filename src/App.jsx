@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene performando. También se vota si alguien ya se ganó salir. El admin puede liberar a alguien cuando quiera, aparte de la votación.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando. También se vota si alguien ya se ganó salir. El admin puede sumar o liberar a alguien cuando quiera, aparte de la votación.",
   },
 ];
 
@@ -1345,6 +1345,7 @@ export default function SubApp() {
   const [activeTab, setActiveTab] = useState("planilla");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [entryVoteChoices, setEntryVoteChoices] = useState([]);
+  const [directAddTarget, setDirectAddTarget] = useState("");
   const [showContainerResults, setShowContainerResults] = useState(false);
   const [exitVoteChoices, setExitVoteChoices] = useState([]);
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
@@ -1829,6 +1830,20 @@ export default function SubApp() {
         members: nextMembers,
         since: nextSince,
         history: [...data.container.history, { name, dateIn, dateOut: todayISO() }],
+      },
+    });
+  };
+
+  const addToContainerDirectly = (name) => {
+    if (!isAdmin || !name) return;
+    if (data.container.members.includes(name)) return;
+    persist({
+      ...data,
+      container: {
+        ...data.container,
+        members: [...data.container.members, name],
+        since: { ...data.container.since, [name]: todayISO() },
+        pendingEntrants: data.container.pendingEntrants.filter((p) => p.name !== name),
       },
     });
   };
@@ -2552,7 +2567,7 @@ export default function SubApp() {
         </button>
       </div>
 
-      {data.container.members.length > 0 && (
+      {data.container.members.length > 0 && ["planilla", "foro", "container"].includes(activeTab) && (
         <div className="mx-5 mt-3 bg-amber-600 rounded-lg px-4 py-2.5 text-sm flex items-center gap-2">
           <Package size={16} className="text-stone-950 flex-shrink-0" />
           <span className="text-stone-950">
@@ -3651,28 +3666,63 @@ export default function SubApp() {
                   </div>
                 )}
 
-                {currentMembers.length > 0 && (
+                {(currentMembers.length > 0 || isAdmin) && (
                   <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-5">
                     <p className="text-stone-300 text-sm mb-2">
                       <span className="font-semibold text-stone-50">Actualmente en el Container:</span>
                     </p>
-                    <div className="space-y-1.5">
-                      {currentMembers.map((name) => {
-                        return (
-                          <div key={name} className="flex items-center justify-between text-sm">
-                            <span className="text-stone-100">{name}</span>
-                            {isAdmin && (
-                              <button
-                                onClick={() => releaseFromContainer(name)}
-                                className="text-xs text-sky-500 hover:text-sky-400 font-mono uppercase"
-                              >
-                                Liberar
-                              </button>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                    {currentMembers.length === 0 ? (
+                      <p className="text-stone-600 text-xs italic mb-2">Nadie por ahora.</p>
+                    ) : (
+                      <div className="space-y-1.5 mb-2">
+                        {currentMembers.map((name) => {
+                          return (
+                            <div key={name} className="flex items-center justify-between text-sm">
+                              <span className="text-stone-100">{name}</span>
+                              {isAdmin && (
+                                <button
+                                  onClick={() => releaseFromContainer(name)}
+                                  className="text-xs text-sky-500 hover:text-sky-400 font-mono uppercase"
+                                >
+                                  Liberar
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {isAdmin && (
+                      <div className="flex gap-2 pt-2 border-t border-stone-700 mt-2">
+                        <select
+                          value={directAddTarget}
+                          onChange={(e) => setDirectAddTarget(e.target.value)}
+                          className="flex-1 bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                        >
+                          <option value="">Sumar directo a...</option>
+                          {[...friends, ...data.guests]
+                            .filter((f) => !currentMembers.includes(f))
+                            .map((f) => (
+                              <option key={f} value={f}>
+                                {f}
+                              </option>
+                            ))}
+                        </select>
+                        <button
+                          onClick={() => {
+                            if (directAddTarget) {
+                              addToContainerDirectly(directAddTarget);
+                              setDirectAddTarget("");
+                            }
+                          }}
+                          disabled={!directAddTarget}
+                          className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 rounded font-display font-semibold uppercase text-sm"
+                        >
+                          Sumar
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -3691,9 +3741,7 @@ export default function SubApp() {
                         El Container no es un castigo — es un ratito aparte para repensar cómo viene cada uno.
                         Votá en anónimo. El Container es un castigo temporal, podés votar a quien vos te parezca
                         que tiene que tomarse un momento de reflexión para pensar cómo viene. Si estás adentro del
-                        Container, no lo tomes personal, son tus amigos queriendo lo mejor para vos. Quien junte{" "}
-                        <span className="text-stone-300 font-semibold">2 votos o más</span> queda como candidato —
-                        recién entra si el admin lo aprueba.
+                        Container, no lo tomes personal, son tus amigos queriendo lo mejor para vos.
                       </p>
 
                       {!canVote ? (
