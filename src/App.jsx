@@ -28,6 +28,7 @@ import {
   BarChart3,
   Star,
   Mail,
+  Cake,
 } from "lucide-react";
 
 const STORAGE_KEY = "board-data";
@@ -82,6 +83,25 @@ const FAQ_ITEMS = [
 ];
 
 // Banco fijo de preguntas de trivia (cargadas a mano, no generadas por IA).
+// Cumpleaños del grupo (solo dia y mes, el año no importa para calcular el proximo).
+const BIRTHDAYS = {
+  Tato: "10-06",
+  Turko: "01-04",
+  Lombriz: "05-18",
+  Mais: "08-29",
+  Orti: "01-18",
+  Tano: "05-13",
+  Lulu: "05-19",
+  Panti: "03-29",
+  Pipe: "11-01",
+  Bachicha: "09-06",
+  MCP: "01-04",
+  Mauve: "09-23",
+  Saeta: "08-19",
+  Roe: "04-20",
+  Real: "03-02",
+};
+
 const TRIVIA_BANK = [
   {
     question: "¿Qué jugador disputó más finales de Champions League sin haberla ganado nunca?",
@@ -1286,6 +1306,53 @@ function tallyContainer(juntadaDate, baseData) {
   };
 }
 
+// Colores fijos asignados por sistema a cada persona (no eligen ellos) —
+// mismo nombre siempre da el mismo color, calculado por hash del nombre.
+const PERSON_COLORS = [
+  "text-rose-400",
+  "text-orange-400",
+  "text-amber-400",
+  "text-lime-400",
+  "text-emerald-400",
+  "text-teal-400",
+  "text-cyan-400",
+  "text-sky-400",
+  "text-blue-400",
+  "text-indigo-400",
+  "text-violet-400",
+  "text-fuchsia-400",
+  "text-pink-400",
+];
+
+function getPersonColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) % 1000000007;
+  }
+  return PERSON_COLORS[Math.abs(hash) % PERSON_COLORS.length];
+}
+
+const MONTH_NAMES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+function getNextBirthday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let best = null;
+  Object.entries(BIRTHDAYS).forEach(([name, md]) => {
+    const [month, day] = md.split("-").map(Number);
+    let candidate = new Date(today.getFullYear(), month - 1, day);
+    if (candidate < today) candidate = new Date(today.getFullYear() + 1, month - 1, day);
+    const daysLeft = Math.round((candidate - today) / (1000 * 60 * 60 * 24));
+    if (!best || candidate < best.date) {
+      best = { name, date: candidate, day, month, daysLeft };
+    }
+  });
+  return best;
+}
+
 function formatDateShort(iso) {
   const d = new Date(iso + "T12:00:00");
   return `${d.getDate()}/${d.getMonth() + 1}`;
@@ -1351,6 +1418,8 @@ export default function SubApp() {
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
   const [commentDrafts, setCommentDrafts] = useState({});
+  const [openReactionPicker, setOpenReactionPicker] = useState(null);
+  const [reactionDraft, setReactionDraft] = useState("");
   const [topicDraft, setTopicDraft] = useState("");
   const [editingTopicId, setEditingTopicId] = useState(null);
   const [editingTopicText, setEditingTopicText] = useState("");
@@ -1651,6 +1720,7 @@ export default function SubApp() {
       author: myName,
       text,
       ts: Date.now(),
+      reactions: [],
     };
     const existing = data.comments[date] || [];
     persist({
@@ -1658,6 +1728,21 @@ export default function SubApp() {
       comments: { ...data.comments, [date]: [...existing, entry] },
     });
     setCommentDrafts({ ...commentDrafts, [date]: "" });
+  };
+
+  const toggleReaction = (date, commentId, emoji) => {
+    if (!myName || !emoji) return;
+    const existing = data.comments[date] || [];
+    const nextComments = existing.map((c) => {
+      if (c.id !== commentId) return c;
+      const reactions = c.reactions || [];
+      const already = reactions.some((r) => r.emoji === emoji && r.author === myName);
+      const nextReactions = already
+        ? reactions.filter((r) => !(r.emoji === emoji && r.author === myName))
+        : [...reactions, { emoji, author: myName }];
+      return { ...c, reactions: nextReactions };
+    });
+    persist({ ...data, comments: { ...data.comments, [date]: nextComments } });
   };
 
   const addTopic = (round) => {
@@ -2914,6 +2999,27 @@ export default function SubApp() {
         </div>
       </div>
 
+      {(() => {
+        const next = getNextBirthday();
+        if (!next) return null;
+        return (
+          <div className="px-5 mt-4">
+            <div className="bg-stone-800 border border-sky-800/40 rounded-lg p-4 flex items-center gap-3">
+              <Cake size={20} className="text-sky-400 flex-shrink-0" />
+              <div>
+                <p className="text-sky-500 text-xs font-mono uppercase tracking-wider mb-0.5">Próximo cumpleaños</p>
+                <p className="text-stone-100 text-sm">
+                  <span className="font-semibold">{next.name}</span> — {next.day} de {MONTH_NAMES[next.month - 1]}{" "}
+                  <span className="text-stone-500">
+                    ({next.daysLeft === 0 ? "¡hoy!" : next.daysLeft === 1 ? "mañana" : `en ${next.daysLeft} días`})
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-sm font-semibold text-stone-300 uppercase tracking-wider">
@@ -3666,63 +3772,57 @@ export default function SubApp() {
                   </div>
                 )}
 
-                {(currentMembers.length > 0 || isAdmin) && (
+                {isAdmin && (
                   <div className="bg-stone-800 border border-stone-700 rounded-lg p-4 mb-5">
-                    <p className="text-stone-300 text-sm mb-2">
-                      <span className="font-semibold text-stone-50">Actualmente en el Container:</span>
+                    <p className="text-stone-400 text-xs font-mono uppercase tracking-wider mb-2">
+                      Gestionar Container (admin)
                     </p>
                     {currentMembers.length === 0 ? (
                       <p className="text-stone-600 text-xs italic mb-2">Nadie por ahora.</p>
                     ) : (
                       <div className="space-y-1.5 mb-2">
-                        {currentMembers.map((name) => {
-                          return (
-                            <div key={name} className="flex items-center justify-between text-sm">
-                              <span className="text-stone-100">{name}</span>
-                              {isAdmin && (
-                                <button
-                                  onClick={() => releaseFromContainer(name)}
-                                  className="text-xs text-sky-500 hover:text-sky-400 font-mono uppercase"
-                                >
-                                  Liberar
-                                </button>
-                              )}
-                            </div>
-                          );
-                        })}
+                        {currentMembers.map((name) => (
+                          <div key={name} className="flex items-center justify-between text-sm">
+                            <span className="text-stone-100">{name}</span>
+                            <button
+                              onClick={() => releaseFromContainer(name)}
+                              className="text-xs text-sky-500 hover:text-sky-400 font-mono uppercase"
+                            >
+                              Liberar
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     )}
 
-                    {isAdmin && (
-                      <div className="flex gap-2 pt-2 border-t border-stone-700 mt-2">
-                        <select
-                          value={directAddTarget}
-                          onChange={(e) => setDirectAddTarget(e.target.value)}
-                          className="flex-1 bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
-                        >
-                          <option value="">Sumar directo a...</option>
-                          {[...friends, ...data.guests]
-                            .filter((f) => !currentMembers.includes(f))
-                            .map((f) => (
-                              <option key={f} value={f}>
-                                {f}
-                              </option>
-                            ))}
-                        </select>
-                        <button
-                          onClick={() => {
-                            if (directAddTarget) {
-                              addToContainerDirectly(directAddTarget);
-                              setDirectAddTarget("");
-                            }
-                          }}
-                          disabled={!directAddTarget}
-                          className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 rounded font-display font-semibold uppercase text-sm"
-                        >
-                          Sumar
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex gap-2 pt-2 border-t border-stone-700 mt-2">
+                      <select
+                        value={directAddTarget}
+                        onChange={(e) => setDirectAddTarget(e.target.value)}
+                        className="flex-1 bg-stone-900 border border-stone-700 rounded px-2 py-1.5 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      >
+                        <option value="">Sumar directo a...</option>
+                        {[...friends, ...data.guests]
+                          .filter((f) => !currentMembers.includes(f))
+                          .map((f) => (
+                            <option key={f} value={f}>
+                              {f}
+                            </option>
+                          ))}
+                      </select>
+                      <button
+                        onClick={() => {
+                          if (directAddTarget) {
+                            addToContainerDirectly(directAddTarget);
+                            setDirectAddTarget("");
+                          }
+                        }}
+                        disabled={!directAddTarget}
+                        className="bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-stone-950 px-4 rounded font-display font-semibold uppercase text-sm"
+                      >
+                        Sumar
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -4571,15 +4671,90 @@ export default function SubApp() {
                       {weekComments.length === 0 ? (
                         <p className="text-stone-500 text-xs italic">Todavía nadie comentó esta juntada.</p>
                       ) : (
-                        weekComments.map((c) => (
-                          <div key={c.id}>
-                            <div className="flex items-baseline gap-2">
-                              <span className="text-stone-50 text-sm font-medium">{c.author}</span>
-                              <span className="text-stone-500 text-xs font-mono">{formatDateTime(c.ts)}</span>
-                            </div>
-                            <p className="text-stone-300 text-sm whitespace-pre-wrap">{c.text}</p>
-                          </div>
-                        ))
+                        [...weekComments]
+                          .sort((a, b) => b.ts - a.ts)
+                          .map((c) => {
+                            const reactions = c.reactions || [];
+                            const grouped = {};
+                            reactions.forEach((r) => {
+                              grouped[r.emoji] = (grouped[r.emoji] || 0) + 1;
+                            });
+                            const pickerOpen = openReactionPicker === c.id;
+                            return (
+                              <div key={c.id}>
+                                <div className="flex items-baseline gap-2">
+                                  <span className={`text-sm font-medium ${getPersonColor(c.author)}`}>{c.author}</span>
+                                  <span className="text-stone-500 text-xs font-mono">{formatDateTime(c.ts)}</span>
+                                </div>
+                                <p className="text-stone-300 text-sm whitespace-pre-wrap">{c.text}</p>
+
+                                <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                  {Object.entries(grouped).map(([emoji, count]) => {
+                                    const mine = myName && reactions.some((r) => r.emoji === emoji && r.author === myName);
+                                    return (
+                                      <button
+                                        key={emoji}
+                                        onClick={() => toggleReaction(date, c.id, emoji)}
+                                        disabled={!myName}
+                                        className={`text-xs px-2 py-0.5 rounded-full border ${
+                                          mine
+                                            ? "bg-orange-600/20 border-orange-600 text-orange-300"
+                                            : "bg-stone-900 border-stone-700 text-stone-300"
+                                        }`}
+                                      >
+                                        {emoji} {count}
+                                      </button>
+                                    );
+                                  })}
+                                  {myName && (
+                                    <button
+                                      onClick={() => {
+                                        setOpenReactionPicker(pickerOpen ? null : c.id);
+                                        setReactionDraft("");
+                                      }}
+                                      className="text-xs text-stone-500 hover:text-stone-300 px-1.5"
+                                      aria-label="Agregar reacción"
+                                    >
+                                      +😀
+                                    </button>
+                                  )}
+                                </div>
+
+                                {pickerOpen && (
+                                  <div className="flex gap-1.5 mt-1.5">
+                                    <input
+                                      type="text"
+                                      value={reactionDraft}
+                                      onChange={(e) => setReactionDraft(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter" && reactionDraft.trim()) {
+                                          toggleReaction(date, c.id, reactionDraft.trim());
+                                          setOpenReactionPicker(null);
+                                          setReactionDraft("");
+                                        }
+                                      }}
+                                      placeholder="Pegá un emoji..."
+                                      maxLength={8}
+                                      autoFocus
+                                      className="w-28 bg-stone-900 border border-stone-700 rounded px-2 py-1 text-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-600"
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        if (reactionDraft.trim()) {
+                                          toggleReaction(date, c.id, reactionDraft.trim());
+                                          setOpenReactionPicker(null);
+                                          setReactionDraft("");
+                                        }
+                                      }}
+                                      className="text-xs bg-orange-600 hover:bg-orange-500 text-stone-950 px-2 rounded"
+                                    >
+                                      OK
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
                       )}
                     </div>
 
