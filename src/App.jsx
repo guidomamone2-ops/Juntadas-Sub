@@ -2665,6 +2665,9 @@ export default function SubApp() {
           <span className="text-stone-950">
             <span className="font-bold uppercase tracking-wide">En el Container:</span>{" "}
             <span className="font-semibold">{data.container.members.join(", ")}</span>
+            {activeTab === "foro" && (
+              <span className="italic"> — recordá que no podés hablar en el foro mientras estés ahí 🤫</span>
+            )}
           </span>
         </div>
       )}
