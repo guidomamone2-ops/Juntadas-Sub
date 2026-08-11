@@ -2666,7 +2666,7 @@ export default function SubApp() {
             <span className="font-bold uppercase tracking-wide">En el Container:</span>{" "}
             <span className="font-semibold">{data.container.members.join(", ")}</span>
             {activeTab === "foro" && (
-              <span className="italic"> — recordá que no podés hablar en el foro mientras estés ahí 🤫</span>
+              <span className="italic">  Aquellos dentro del container no pueden comentar en el foro 🤫</span>
             )}
           </span>
         </div>
