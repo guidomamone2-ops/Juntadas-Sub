@@ -46,7 +46,7 @@ const FONT_IMPORT = `
 const FAQ_ITEMS = [
   {
     q: "¿Cómo se carga la asistencia?",
-    a: "Solo el admin marca si viniste, si faltaste, y si fuiste anfitrión — así nadie puede \"hacerse trampa\" a sí mismo. Cada jueves se carga tocando la celda de cada persona, que va rotando entre: ausente sin aviso → ausente con aviso → presente → presente + anfitrión.",
+    a: "Cada jueves se carga tocando la celda de cada persona, que va rotando entre: ausente sin aviso → ausente con aviso → presente → presente + anfitrión. Así queda un registro parejo para todo el grupo, sin que cada uno tenga que marcarse a sí mismo.",
   },
   {
     q: '¿Qué es "avisó" vs "sin aviso"?',
@@ -78,7 +78,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Qué es el Container?",
-    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando. También se vota si alguien ya se ganó salir. El admin puede sumar o liberar a alguien cuando quiera, aparte de la votación.",
+    a: "Es un espacio de reflexión, no un castigo de verdad. Después de cada juntada, cualquiera puede votar en anónimo a quién le vendría bien un momento aparte para repensar cómo viene jugando. También se vota si alguien ya se ganó salir.",
   },
 ];
 
@@ -1711,6 +1711,8 @@ export default function SubApp() {
     setEditingWeekDate(null);
   };
 
+  const commentBoxRefs = useRef({});
+
   const addComment = (date) => {
     const text = (commentDrafts[date] || "").trim();
     if (!text || !myName) return;
@@ -1728,6 +1730,11 @@ export default function SubApp() {
       comments: { ...data.comments, [date]: [...existing, entry] },
     });
     setCommentDrafts({ ...commentDrafts, [date]: "" });
+    // el mensaje nuevo aparece arriba de todo — nos aseguramos de que se vea
+    setTimeout(() => {
+      const box = commentBoxRefs.current[date];
+      if (box) box.scrollTop = 0;
+    }, 0);
   };
 
   const toggleReaction = (date, commentId, emoji) => {
@@ -4667,7 +4674,12 @@ export default function SubApp() {
                       </span>
                     </div>
 
-                    <div className="px-4 py-3 space-y-3 max-h-64 overflow-y-auto">
+                    <div
+                      ref={(el) => {
+                        commentBoxRefs.current[date] = el;
+                      }}
+                      className="px-4 py-3 space-y-3 max-h-64 overflow-y-auto"
+                    >
                       {weekComments.length === 0 ? (
                         <p className="text-stone-500 text-xs italic">Todavía nadie comentó esta juntada.</p>
                       ) : (
