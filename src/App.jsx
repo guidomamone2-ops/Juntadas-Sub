@@ -2660,15 +2660,15 @@ export default function SubApp() {
       </div>
 
       {data.container.members.length > 0 && ["planilla", "foro", "container"].includes(activeTab) && (
-        <div className="mx-5 mt-3 bg-amber-600 rounded-lg px-4 py-2.5 text-sm flex items-center gap-2">
-          <Package size={16} className="text-stone-950 flex-shrink-0" />
-          <span className="text-stone-950">
+        <div className="mx-5 mt-3 bg-amber-600 rounded-lg px-4 py-2.5 text-sm flex items-start gap-2">
+          <Package size={16} className="text-stone-950 flex-shrink-0 mt-0.5" />
+          <div className="text-stone-950">
             <span className="font-bold uppercase tracking-wide">En el Container:</span>{" "}
             <span className="font-semibold">{data.container.members.join(", ")}</span>
             {activeTab === "foro" && (
-              <span className="italic">  Aquellos dentro del container no pueden comentar en el foro 🤫</span>
+              <p className="italic text-xs mt-0.5">Aquellos dentro del Container no pueden participar del Foro 🤫</p>
             )}
-          </span>
+          </div>
         </div>
       )}
 
