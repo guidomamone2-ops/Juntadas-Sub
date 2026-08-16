@@ -1491,14 +1491,14 @@ export default function SubApp() {
     }
   };
 
-  // Pop-up de video: se muestra hasta 2 veces por dispositivo, despues nunca mas.
+  // Pop-up de video: se muestra una sola vez por dispositivo, despues nunca mas.
   useEffect(() => {
     if (!myName) return; // recien lo mostramos una vez adentro de la app
     (async () => {
       try {
         const result = await storage.get("video-popup-views", false);
         const views = result && result.value ? parseInt(result.value, 10) || 0 : 0;
-        if (views < 2) {
+        if (views < 1) {
           setShowVideoPopup(true);
           await storage.set("video-popup-views", String(views + 1), false);
         }
@@ -5013,7 +5013,6 @@ export default function SubApp() {
                 autoPlay
                 muted={videoMuted}
                 playsInline
-                loop
                 className="w-full max-h-[70vh] bg-black"
               />
               <button
