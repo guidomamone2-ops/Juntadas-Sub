@@ -29,6 +29,8 @@ import {
   Star,
   Mail,
   Cake,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 
 const STORAGE_KEY = "board-data";
@@ -1417,6 +1419,8 @@ export default function SubApp() {
   const [exitVoteChoices, setExitVoteChoices] = useState([]);
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
+  const [showVideoPopup, setShowVideoPopup] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [openReactionPicker, setOpenReactionPicker] = useState(null);
   const [reactionDraft, setReactionDraft] = useState("");
@@ -1486,6 +1490,23 @@ export default function SubApp() {
       // si falla el guardado, igual queda ocultado para esta sesion
     }
   };
+
+  // Pop-up de video: se muestra hasta 2 veces por dispositivo, despues nunca mas.
+  useEffect(() => {
+    if (!myName) return; // recien lo mostramos una vez adentro de la app
+    (async () => {
+      try {
+        const result = await storage.get("video-popup-views", false);
+        const views = result && result.value ? parseInt(result.value, 10) || 0 : 0;
+        if (views < 2) {
+          setShowVideoPopup(true);
+          await storage.set("video-popup-views", String(views + 1), false);
+        }
+      } catch (e) {
+        // si falla, no mostramos para no arriesgar mostrarlo de mas
+      }
+    })();
+  }, [myName]);
 
   const resetLoginForm = () => {
     setLoginSelect("");
@@ -4977,6 +4998,38 @@ export default function SubApp() {
                 className="flex-1 bg-rose-700 hover:bg-rose-600 text-stone-50 py-2 rounded text-sm font-semibold"
               >
                 Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVideoPopup && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-30">
+          <div className="bg-stone-900 border border-stone-700 rounded-lg overflow-hidden w-full max-w-sm">
+            <div className="relative">
+              <video
+                src="/bienvenida.mp4"
+                autoPlay
+                muted={videoMuted}
+                playsInline
+                loop
+                className="w-full aspect-video bg-black"
+              />
+              <button
+                onClick={() => setVideoMuted((m) => !m)}
+                className="absolute bottom-2 right-2 bg-stone-950/70 text-stone-50 rounded-full p-2"
+                aria-label={videoMuted ? "Activar sonido" : "Silenciar"}
+              >
+                {videoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              </button>
+            </div>
+            <div className="p-4">
+              <button
+                onClick={() => setShowVideoPopup(false)}
+                className="w-full bg-orange-600 hover:bg-orange-500 text-stone-950 py-2 rounded font-display font-semibold uppercase text-sm"
+              >
+                Cerrar
               </button>
             </div>
           </div>
