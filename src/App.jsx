@@ -5014,7 +5014,7 @@ export default function SubApp() {
                 muted={videoMuted}
                 playsInline
                 loop
-                className="w-full aspect-video bg-black"
+                className="w-full max-h-[70vh] bg-black"
               />
               <button
                 onClick={() => setVideoMuted((m) => !m)}
