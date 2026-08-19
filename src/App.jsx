@@ -1420,6 +1420,7 @@ export default function SubApp() {
   const [welcomeDismissed, setWelcomeDismissed] = useState(true);
   const [welcomeChecked, setWelcomeChecked] = useState(false);
   const [showVideoPopup, setShowVideoPopup] = useState(false);
+  const [showBirthdayPopup, setShowBirthdayPopup] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [openReactionPicker, setOpenReactionPicker] = useState(null);
@@ -1501,6 +1502,26 @@ export default function SubApp() {
         if (views < 1) {
           setShowVideoPopup(true);
           await storage.set("video-popup-views", String(views + 1), false);
+        }
+      } catch (e) {
+        // si falla, no mostramos para no arriesgar mostrarlo de mas
+      }
+    })();
+  }, [myName]);
+
+  // Pop-up de cumpleaños de Saeta: solo el dia de su cumple, una vez por dispositivo.
+  useEffect(() => {
+    if (!myName) return;
+    const today = new Date();
+    const mmdd = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    if (mmdd !== BIRTHDAYS.Saeta) return;
+    (async () => {
+      try {
+        const key = `birthday-popup-seen-${today.getFullYear()}-${mmdd}`;
+        const result = await storage.get(key, false);
+        if (!result || !result.value) {
+          setShowBirthdayPopup(true);
+          await storage.set(key, "1", false);
         }
       } catch (e) {
         // si falla, no mostramos para no arriesgar mostrarlo de mas
@@ -5026,6 +5047,22 @@ export default function SubApp() {
             <div className="p-4">
               <button
                 onClick={() => setShowVideoPopup(false)}
+                className="w-full bg-orange-600 hover:bg-orange-500 text-stone-950 py-2 rounded font-display font-semibold uppercase text-sm"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBirthdayPopup && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-30">
+          <div className="bg-stone-900 border border-stone-700 rounded-lg overflow-hidden w-full max-w-sm">
+            <img src="/cumple-saeta.png" alt="Feliz cumpleaños Saeta" className="w-full max-h-[75vh] object-contain bg-black" />
+            <div className="p-4">
+              <button
+                onClick={() => setShowBirthdayPopup(false)}
                 className="w-full bg-orange-600 hover:bg-orange-500 text-stone-950 py-2 rounded font-display font-semibold uppercase text-sm"
               >
                 Cerrar
