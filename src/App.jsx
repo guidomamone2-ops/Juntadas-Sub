@@ -1509,24 +1509,14 @@ export default function SubApp() {
     })();
   }, [myName]);
 
-  // Pop-up de cumpleaños de Saeta: solo el dia de su cumple, una vez por dispositivo.
+  // Pop-up de cumpleaños de Saeta: se muestra cada vez que se entra, mientras sea el dia de su cumple.
   useEffect(() => {
     if (!myName) return;
     const today = new Date();
     const mmdd = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    if (mmdd !== BIRTHDAYS.Saeta) return;
-    (async () => {
-      try {
-        const key = `birthday-popup-seen-${today.getFullYear()}-${mmdd}`;
-        const result = await storage.get(key, false);
-        if (!result || !result.value) {
-          setShowBirthdayPopup(true);
-          await storage.set(key, "1", false);
-        }
-      } catch (e) {
-        // si falla, no mostramos para no arriesgar mostrarlo de mas
-      }
-    })();
+    if (mmdd === BIRTHDAYS.Saeta) {
+      setShowBirthdayPopup(true);
+    }
   }, [myName]);
 
   const resetLoginForm = () => {
